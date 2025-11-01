@@ -1,0 +1,101 @@
+package UserInterface;
+public class CheckSquare
+{
+    private GameBoard board;
+
+    private int boardHeight;
+
+    private int boardWidth;
+
+    private static final int[] distantX = {-1, 0, 1};
+    private static final int[] distantY = {-1, 0, 1};
+
+    public CheckSquare(GameBoard board)
+    {
+        this.board = board;
+        // Both height and width of the board should remove its padding values.
+        boardHeight = (board.getHeight() - 20) / 20;
+        boardWidth = (board.getWidth() - 20) / 20;
+    }
+
+    private boolean hasKickedBoundary(int x, int y)
+    {
+        return x < 0 || x >= boardWidth || y < 0 || y >= boardHeight;
+    }
+
+    protected boolean isSuccess()
+    {
+        // Ensure count start at 0 once this method is invoked.
+        int count = 0;
+
+        for (int y = 0; y < boardHeight; y++)
+        {
+            for (int x = 0; x < boardWidth; x++)
+            {
+                if (((SmartSquare) board.getSquareAt(x, y)).getTraverse())
+                    count++;
+            }
+        }
+
+        return count == boardHeight * boardWidth;
+    }
+
+    protected void showBomb(int currentX, int currentY)
+    {
+        for (int y = 0; y < boardHeight; y++)
+        {
+            for (int x = 0; x < boardWidth; x++)
+            {
+                if (currentX == x && currentY == y){}
+                else if (((SmartSquare) board.getSquareAt(x, y)).getBombExist())
+                    board.getSquareAt(x, y).setImage("images/bomb.png");
+                else if(((SmartSquare) board.getSquareAt(x, y)).getGuessThisSquareIsBomb())
+                    board.getSquareAt(x, y).setImage("images/flagWrong.png"); // Wrong guess!
+            }
+        }
+    }
+
+    protected void countBomb(int currentX, int currentY)
+    {
+        int count = 0;
+        SmartSquare currentObject;
+
+        if (hasKickedBoundary(currentX, currentY))
+            return;
+        else if(((SmartSquare)board.getSquareAt(currentX, currentY)).getTraverse())
+            return;
+        else {
+            SmartSquare squareObject;
+
+            currentObject = (SmartSquare)board.getSquareAt(currentX, currentY);
+            currentObject.setTraverse(true);
+
+            for (int x : distantX)
+            {
+                for (int y: distantY)
+                {
+                    if (hasKickedBoundary(currentX + x, currentY + y)){}
+                    else if (x == 0 && y == 0){}
+                    else{
+                        squareObject = (SmartSquare)board.getSquareAt(currentX + x, currentY + y);
+                        count = squareObject.getBombExist() ? count + 1 : count;
+                    }
+                }
+            }
+        }
+
+        if (count != 0)
+            currentObject.setImage("images/" + count + ".png");
+        else {
+            currentObject.setImage("images/0.png");
+            countBomb(currentX - 1, currentY -1); // Upper left
+            countBomb(currentX, currentY -1); // Above
+            countBomb(currentX + 1, currentY -1); // Upper right
+            countBomb(currentX - 1, currentY); // Left side
+            countBomb(currentX + 1, currentY); // Right side
+            countBomb(currentX - 1, currentY + 1); // Lower left
+            countBomb(currentX, currentY + 1); // Below
+            countBomb(currentX + 1, currentY + 1); // Lower right
+        }
+    }
+}

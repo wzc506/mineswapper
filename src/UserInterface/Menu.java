@@ -1,0 +1,181 @@
+package UserInterface;
+import javax.swing.*;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
+
+public class Menu extends JFrame implements ActionListener
+{
+    private JButton start;
+    private JRadioButton beginner, intermediate, advanced, custom;
+    private JTextField width, height, mines;
+
+    public Menu(String title)
+    {
+        setTitle(title);
+
+        JLabel subtitle = new JLabel("Difficulty");
+        subtitle.setBounds(100,10,100,20);
+        add(subtitle);
+
+        beginner = new JRadioButton("Beginner");
+        beginner.setBounds(40,40,150,20);
+        add(beginner);
+
+        JLabel bDescFirstLine = new JLabel("10 mines");
+        bDescFirstLine.setBounds(70,60,100,20);
+        JLabel bDescSecondLine = new JLabel("10 x 10 tile grid");
+        bDescSecondLine.setBounds(70,80,100,20);
+        add(bDescFirstLine);
+        add(bDescSecondLine);
+
+        intermediate=new JRadioButton("Intermediate");
+        intermediate.setBounds(40,100,150,20);
+        add(intermediate);
+
+        JLabel iDescFirstLine = new JLabel("40 mines");
+        iDescFirstLine.setBounds(70,120,100,20);
+        JLabel iDescSecondLine = new JLabel("16 x 16 tile grid");
+        iDescSecondLine.setBounds(70,140,100,20);
+        add(iDescFirstLine);
+        add(iDescSecondLine);
+
+        advanced=new JRadioButton("Advanced");
+        advanced.setBounds(40,160,160,20);
+        add(advanced);
+
+        JLabel aDescFirstLine = new JLabel("100 mines");
+        aDescFirstLine.setBounds(70,180,100,20);
+        JLabel aDescSecondLine = new JLabel("30 x 25 tile grid");
+        aDescSecondLine.setBounds(70,200,100,20);
+        add(aDescFirstLine);
+        add(aDescSecondLine);
+
+        custom = new JRadioButton("Custom");
+        custom.setBounds(40,220,100,20);
+        add(custom);
+
+        JLabel widthLabel = new JLabel("Width (10-30):");
+        widthLabel.setBounds(70,240,80,20);
+        add(widthLabel);
+
+        width = new JTextField();
+        width.setBounds(170,240,40,20);
+        add(width);
+
+        JLabel heightLabel = new JLabel("height (10-25):");
+        heightLabel.setBounds(70,260,90,20);
+        add(heightLabel);
+
+        height = new JTextField();
+        height.setBounds(170,260,40,20);
+        add(height);
+
+        JLabel mineLabel = new JLabel("Mines (10-100):");
+        mineLabel.setBounds(70,280,90,20);
+        add(mineLabel);
+
+        mines = new JTextField();
+        mines.setBounds(170,280,40,20);
+        add(mines);
+
+        start = new JButton("New Game");
+        start.setBounds(80,320,100,20);
+        add(start);
+
+        width.setEditable(false);
+        height.setEditable(false);
+        mines.setEditable(false);
+
+        custom.addActionListener(this);
+        beginner.addActionListener(this);
+        intermediate.addActionListener(this);
+        advanced.addActionListener(this);
+        start.addActionListener(this);
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(beginner);
+        group.add(intermediate);
+        group.add(advanced);
+        group.add(custom);
+
+        beginner.setSelected(true);
+        setSize(280,400);
+        setLayout(null);
+        setVisible(true);
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == custom)
+        {
+            width.setEditable(true);
+            height.setEditable(true);
+            mines.setEditable(true);
+        } else if (e.getSource() == start) {
+            int boardWidth = 0;
+            int boardHeight = 0;
+            int bombs = 0;
+            boolean errorFlag = false;
+
+            if (beginner.isSelected())
+            {
+                boardWidth = 10;
+                boardHeight = 10;
+                bombs = 10;
+            } else if (intermediate.isSelected()) {
+                boardWidth = 16;
+                boardHeight = 16;
+                bombs = 40;
+            } else if (advanced.isSelected()) {
+                boardWidth = 30;
+                boardHeight = 25;
+                bombs = 100;
+            } else {
+                if(!checkValid(width.getText(), height.getText(), mines.getText()))
+                {
+                    errorFlag = true;
+                    JOptionPane.showMessageDialog(null, "Please enter correct numbers!");
+
+                } else {
+                    boardWidth = Integer.parseInt(width.getText());
+                    boardHeight = Integer.parseInt(height.getText());
+                    bombs = Integer.parseInt(mines.getText());
+                }
+            }
+
+            if(!errorFlag)
+            {
+
+                this.dispose();
+                GameBoard b = new GameBoard("Minesweeper", boardWidth, boardHeight);
+                ProduceBombs bomb = new ProduceBombs(b, bombs);
+                ((SmartSquare) b.getSquareAt(0, 0)).setStartTime(System.currentTimeMillis());
+            }
+
+        } else{
+            width.setEditable(false);
+            height.setEditable(false);
+            mines.setEditable(false);
+        }
+    }
+
+    private boolean checkValid(String bWidth, String bHeight, String bomb)
+    {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        if (bWidth == null || bHeight== null || bomb == null)
+            return false;
+        else if (bWidth.isEmpty() || bHeight.isEmpty() || bomb.isEmpty())
+            return false;
+        else if (!pattern.matcher(bWidth).matches() || !pattern.matcher(bHeight).matches() || !pattern.matcher(bomb).matches())
+            return false;
+        else if (Integer.parseInt(bWidth) < 10 || Integer.parseInt(bWidth) > 30 || Integer.parseInt(bHeight) < 10 || Integer.parseInt(bHeight) > 25
+                || Integer.parseInt(bomb) < 10 || Integer.parseInt(bomb) > 100)
+            return false;
+        else
+            return Integer.parseInt(bWidth) * Integer.parseInt(bHeight) >= Integer.parseInt(bomb);
+    }
+}
