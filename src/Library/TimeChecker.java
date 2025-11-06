@@ -18,10 +18,10 @@ public interface TimeChecker
                 if (sec == 0)
                     return ms + " ms";
                 else
-                    return sec + " sec " + ms % 1000 + " ms";
+                    return sec + " s " + ms % 1000 + " ms";
             } else
-                return min + " min " + sec % CONVERT_TO_OTHERS + " sec " + ms % CONVERT_TO_SEC + " ms";
+                return min + " min " + sec % CONVERT_TO_OTHERS + " s " + ms % CONVERT_TO_SEC + " ms";
         } else
-            return hr + " hour " + min % CONVERT_TO_OTHERS + " min " + sec % CONVERT_TO_OTHERS + " sec " + ms % CONVERT_TO_SEC + " ms";
+            return hr + " hour " + min % CONVERT_TO_OTHERS + " min " + sec % CONVERT_TO_OTHERS + " s " + ms % CONVERT_TO_SEC + " ms";
     }
 }
