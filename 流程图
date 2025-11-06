@@ -1,0 +1,116 @@
+@startuml
+' 设置图表样式
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 120
+skinparam sequenceParticipant bold
+
+actor User as "玩家"
+
+participant Driver
+participant Menu
+participant GameBoard
+participant SmartSquare
+participant ProduceBombs
+participant CheckSquare
+
+' 1. 游戏启动
+group 游戏启动与菜单选择
+    Driver -> Menu : <<create>>\nnew Menu("Minesweeper")
+    activate Menu
+    Menu -> User : 显示难度选择菜单
+    
+    User -> Menu : 选择难度并点击"开始游戏"
+    Menu -> Menu : actionPerformed(event)
+    Menu -> Menu : 根据选择设置 width, height, bombs
+    Menu -> GameBoard : <<create>>\nnew GameBoard("踩雷游戏", width, height)
+    activate GameBoard
+    
+    loop height
+        loop width
+            GameBoard -> SmartSquare : <<create>>\nnew SmartSquare(x, y, this)
+            activate SmartSquare
+            SmartSquare --> GameBoard : 返回方块实例
+            deactivate SmartSquare
+        end
+    end
+    
+    GameBoard --> Menu : 返回游戏棋盘实例
+    deactivate GameBoard
+    
+    Menu -> ProduceBombs : <<create>>\nnew ProduceBombs(board, bombs)
+    activate ProduceBombs
+    loop bombs 次
+        ProduceBombs -> ProduceBombs : reproduceBomb()
+        ProduceBombs -> GameBoard : getSquareAt(x, y)
+        activate GameBoard
+        GameBoard --> ProduceBombs : 返回 SmartSquare
+        deactivate GameBoard
+        ProduceBombs -> SmartSquare : setBombExist(true)
+        activate SmartSquare
+        deactivate SmartSquare
+    end
+    deactivate ProduceBombs
+    
+    Menu -> GameBoard : getSquareAt(0, 0)
+    activate GameBoard
+    GameBoard --> Menu : 返回 SmartSquare
+    deactivate GameBoard
+    
+    Menu -> SmartSquare : setStartTime(System.currentTimeMillis())
+    activate SmartSquare
+    deactivate SmartSquare
+    
+    Menu -> Menu : dispose()
+    Menu --> User : 关闭菜单, 显示游戏棋盘
+    deactivate Menu
+end
+
+' 2. 玩家游戏过程
+group 玩家进行游戏
+    User -> SmartSquare : 左键点击方块
+    
+    ' Swing 事件机制: JButton -> GameBoard.actionPerformed -> SmartSquare.clicked
+    note right of SmartSquare : Swing事件触发\nGameBoard.actionPerformed()
+    SmartSquare -> SmartSquare : clicked()
+    activate SmartSquare
+    
+    SmartSquare -> CheckSquare : <<create>>\nnew CheckSquare(board)
+    activate CheckSquare
+    
+    alt 点击到地雷
+        SmartSquare -> SmartSquare : thisSquareHasBomb == true
+        SmartSquare -> SmartSquare : setImage("bombReveal.png")
+        SmartSquare -> CheckSquare : showBomb(x, y)
+        SmartSquare -> SmartSquare : window("游戏结束", ...)
+        activate SmartSquare #FFCCCC
+            SmartSquare -> User : 显示游戏失败对话框
+            User -> SmartSquare : 选择是否重玩
+            alt 玩家选择"是"
+                SmartSquare -> Menu : <<create>>\nnew Menu(...)
+            end
+            SmartSquare -> GameBoard : dispose()
+            deactivate SmartSquare
+    else 点击到安全方块
+        SmartSquare -> CheckSquare : countBomb(x, y)\n(递归检查相邻方块)
+        CheckSquare -> SmartSquare : isSuccess()
+        
+        alt 游戏胜利
+            SmartSquare -> SmartSquare : window("恭喜", ...)
+            activate SmartSquare #CCFFCC
+                SmartSquare -> User : 显示游戏胜利对话框
+                User -> SmartSquare : 选择是否重玩
+                 alt 玩家选择"是"
+                    SmartSquare -> Menu : <<create>>\nnew Menu(...)
+                end
+                SmartSquare -> GameBoard : dispose()
+            deactivate SmartSquare
+        else 游戏继续
+            CheckSquare --> SmartSquare : 返回
+            deactivate CheckSquare
+            SmartSquare --> User : 显示数字或空白区域
+        end
+    end
+    deactivate SmartSquare
+end
+@enduml

@@ -1,0 +1,83 @@
+@startuml
+' 设置图表样式
+skinparam classAttributeIconSize 0
+skinparam roundcorner 20
+hide empty members
+
+class Driver {
+    + {static} main(String[] args)
+}
+
+class Menu {
+    - start: JButton
+    - beginner: JRadioButton
+    - intermediate: JRadioButton
+    - advanced: JRadioButton
+    - custom: JRadioButton
+    + actionPerformed(ActionEvent e)
+}
+note right of Menu : 继承自 JFrame
+
+class GameBoard {
+    - boardWidth: int
+    - boardHeight: int
+    - board: GameSquare[][]
+    + getSquareAt(int x, int y): GameSquare
+}
+note right of GameBoard : 继承自 JFrame
+
+abstract class GameSquare {
+    # xLocation: int
+    # yLocation: int
+    + setImage(String filename)
+    + {abstract} clicked()
+}
+note left of GameSquare : 继承自 JButton
+
+class SmartSquare {
+    - thisSquareHasBomb: boolean
+    - guessThisSquareIsBomb: boolean
+    - startTime: long
+    + clicked()
+    + mouseClicked(MouseEvent e)
+}
+
+class CheckSquare {
+    - board: GameBoard
+    + countBomb(int x, int y)
+    + showBomb(int x, int y)
+    + isSuccess(): boolean
+}
+
+class ProduceBombs {
+    + reproduceBomb()
+}
+
+abstract class Bomb {
+    # board: GameBoard
+    # {abstract} reproduceBomb()
+}
+
+interface TimeChecker {
+    + {static} calculateTime(long time): String
+}
+
+interface MouseListener <<interface>>
+
+' --- 关系定义 ---
+
+' 继承与实现
+GameSquare <|-- SmartSquare
+Bomb <|-- ProduceBombs
+TimeChecker <|.. SmartSquare
+MouseListener <|.. SmartSquare
+
+' 依赖与组合
+Driver ..> Menu : creates
+Menu ..> GameBoard : creates
+GameBoard "1" *-- "many" GameSquare : contains
+ProduceBombs ..> GameBoard : uses
+CheckSquare ..> GameBoard : uses
+CheckSquare ..> SmartSquare : uses
+
+@enduml
