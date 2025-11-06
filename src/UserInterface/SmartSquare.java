@@ -82,8 +82,8 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 			setImage("images/bombReveal.png");
 			long costTime = System.currentTimeMillis() - ((SmartSquare) board.getSquareAt(0, 0)).getStartTime();
 			cq.showBomb(xLocation, yLocation);
-			window("You used " + TimeChecker.calculateTime(costTime) +". Do you want to try again?", "Game Over",
-					new ImageIcon("images/failFace.png"));
+			window("用时 " + TimeChecker.calculateTime(costTime) + ". 你想再试一次吗?", "游戏结束",
+					new ImageIcon("images/cai.jpg"));
 		} else{
 			thisSquareHasTraversed = false;
 
@@ -92,8 +92,8 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 			if (cq.isSuccess()) {
 				long costTime = System.currentTimeMillis() - ((SmartSquare) board.getSquareAt(0, 0)).getStartTime();
 				cq.showBomb(xLocation, yLocation);
-				window("You win this game in " + TimeChecker.calculateTime(costTime) +
-                        "! Do you want to try again?","Congratulations",
+				window("你赢了！用时 " + TimeChecker.calculateTime(costTime) +
+                        "! 你想再试一次吗?","恭喜",
 						new ImageIcon("images/passFace.jpg"));
 			}
 		}
@@ -107,7 +107,7 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 
 		if (choose == JOptionPane.YES_OPTION)
 		{
-			Menu menu = new Menu("Mine sweeper");
+			Menu menu = new Menu("扫雷");
 		}
 
 		board.dispose();

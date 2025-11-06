@@ -15,48 +15,48 @@ public class Menu extends JFrame implements ActionListener
     {
         setTitle(title);
 
-        JLabel subtitle = new JLabel("Difficulty");
+        JLabel subtitle = new JLabel("难度选择");
         subtitle.setBounds(100,10,100,20);
         add(subtitle);
 
-        beginner = new JRadioButton("Beginner");
+        beginner = new JRadioButton("新手");
         beginner.setBounds(40,40,150,20);
         add(beginner);
 
-        JLabel bDescFirstLine = new JLabel("10 mines");
+        JLabel bDescFirstLine = new JLabel("10 地雷");
         bDescFirstLine.setBounds(70,60,100,20);
-        JLabel bDescSecondLine = new JLabel("10 x 10 tile grid");
+        JLabel bDescSecondLine = new JLabel("10 x 10 方格");
         bDescSecondLine.setBounds(70,80,100,20);
         add(bDescFirstLine);
         add(bDescSecondLine);
 
-        intermediate=new JRadioButton("Intermediate");
+        intermediate=new JRadioButton("中级");
         intermediate.setBounds(40,100,150,20);
         add(intermediate);
 
-        JLabel iDescFirstLine = new JLabel("40 mines");
+        JLabel iDescFirstLine = new JLabel("40 地雷");
         iDescFirstLine.setBounds(70,120,100,20);
-        JLabel iDescSecondLine = new JLabel("16 x 16 tile grid");
+        JLabel iDescSecondLine = new JLabel("16 x 16 方格");
         iDescSecondLine.setBounds(70,140,100,20);
         add(iDescFirstLine);
         add(iDescSecondLine);
 
-        advanced=new JRadioButton("Advanced");
+        advanced=new JRadioButton("高级");
         advanced.setBounds(40,160,160,20);
         add(advanced);
 
-        JLabel aDescFirstLine = new JLabel("100 mines");
+        JLabel aDescFirstLine = new JLabel("100 地雷");
         aDescFirstLine.setBounds(70,180,100,20);
-        JLabel aDescSecondLine = new JLabel("30 x 25 tile grid");
+        JLabel aDescSecondLine = new JLabel("30 x 25 方格");
         aDescSecondLine.setBounds(70,200,100,20);
         add(aDescFirstLine);
         add(aDescSecondLine);
 
-        custom = new JRadioButton("Custom");
+        custom = new JRadioButton("自定义");
         custom.setBounds(40,220,100,20);
         add(custom);
 
-        JLabel widthLabel = new JLabel("Width (10-30):");
+        JLabel widthLabel = new JLabel("宽度 (10-30):");
         widthLabel.setBounds(70,240,80,20);
         add(widthLabel);
 
@@ -64,7 +64,7 @@ public class Menu extends JFrame implements ActionListener
         width.setBounds(170,240,40,20);
         add(width);
 
-        JLabel heightLabel = new JLabel("height (10-25):");
+        JLabel heightLabel = new JLabel("高度 (10-25):");
         heightLabel.setBounds(70,260,90,20);
         add(heightLabel);
 
@@ -72,7 +72,7 @@ public class Menu extends JFrame implements ActionListener
         height.setBounds(170,260,40,20);
         add(height);
 
-        JLabel mineLabel = new JLabel("Mines (10-100):");
+        JLabel mineLabel = new JLabel("地雷 (10-100):");
         mineLabel.setBounds(70,280,90,20);
         add(mineLabel);
 
@@ -80,7 +80,7 @@ public class Menu extends JFrame implements ActionListener
         mines.setBounds(170,280,40,20);
         add(mines);
 
-        start = new JButton("New Game");
+        start = new JButton("开始游戏");
         start.setBounds(80,320,100,20);
         add(start);
 
@@ -138,7 +138,7 @@ public class Menu extends JFrame implements ActionListener
                 if(!checkValid(width.getText(), height.getText(), mines.getText()))
                 {
                     errorFlag = true;
-                    JOptionPane.showMessageDialog(null, "Please enter correct numbers!");
+                    JOptionPane.showMessageDialog(null, "请输入正确的数字!");
 
                 } else {
                     boardWidth = Integer.parseInt(width.getText());
@@ -151,7 +151,7 @@ public class Menu extends JFrame implements ActionListener
             {
 
                 this.dispose();
-                GameBoard b = new GameBoard("Minesweeper", boardWidth, boardHeight);
+                GameBoard b = new GameBoard("扫雷", boardWidth, boardHeight);
                 ProduceBombs bomb = new ProduceBombs(b, bombs);
                 ((SmartSquare) b.getSquareAt(0, 0)).setStartTime(System.currentTimeMillis());
             }
