@@ -15,48 +15,48 @@ public class Menu extends JFrame implements ActionListener
     {
         setTitle(title);
 
-        JLabel subtitle = new JLabel("ÄÑ¶ÈÑ¡Ôñ");
+        JLabel subtitle = new JLabel("éš¾åº¦é€‰æ‹©");
         subtitle.setBounds(100,10,100,20);
         add(subtitle);
 
-        beginner = new JRadioButton("ĞÂÊÖ");
+        beginner = new JRadioButton("æ–°æ‰‹");
         beginner.setBounds(40,40,150,20);
         add(beginner);
 
-        JLabel bDescFirstLine = new JLabel("10 µØÀ×");
+        JLabel bDescFirstLine = new JLabel("10 åœ°é›·");
         bDescFirstLine.setBounds(70,60,100,20);
-        JLabel bDescSecondLine = new JLabel("10 x 10 ·½¸ñ");
+        JLabel bDescSecondLine = new JLabel("10 x 10 æ–¹æ ¼");
         bDescSecondLine.setBounds(70,80,100,20);
         add(bDescFirstLine);
         add(bDescSecondLine);
 
-        intermediate=new JRadioButton("ÖĞ¼¶");
+        intermediate=new JRadioButton("ä¸­çº§");
         intermediate.setBounds(40,100,150,20);
         add(intermediate);
 
-        JLabel iDescFirstLine = new JLabel("40 µØÀ×");
+        JLabel iDescFirstLine = new JLabel("40 åœ°é›·");
         iDescFirstLine.setBounds(70,120,100,20);
-        JLabel iDescSecondLine = new JLabel("16 x 16 ·½¸ñ");
+        JLabel iDescSecondLine = new JLabel("16 x 16 æ–¹æ ¼");
         iDescSecondLine.setBounds(70,140,100,20);
         add(iDescFirstLine);
         add(iDescSecondLine);
 
-        advanced=new JRadioButton("¸ß¼¶");
+        advanced=new JRadioButton("é«˜çº§");
         advanced.setBounds(40,160,160,20);
         add(advanced);
 
-        JLabel aDescFirstLine = new JLabel("100 µØÀ×");
+        JLabel aDescFirstLine = new JLabel("100 åœ°é›·");
         aDescFirstLine.setBounds(70,180,100,20);
-        JLabel aDescSecondLine = new JLabel("30 x 25 ·½¸ñ");
+        JLabel aDescSecondLine = new JLabel("30 x 25 æ–¹æ ¼");
         aDescSecondLine.setBounds(70,200,100,20);
         add(aDescFirstLine);
         add(aDescSecondLine);
 
-        custom = new JRadioButton("×Ô¶¨Òå");
+        custom = new JRadioButton("è‡ªå®šä¹‰");
         custom.setBounds(40,220,100,20);
         add(custom);
 
-        JLabel widthLabel = new JLabel("¿í¶È (10-30):");
+        JLabel widthLabel = new JLabel("å®½åº¦ (10-30):");
         widthLabel.setBounds(70,240,80,20);
         add(widthLabel);
 
@@ -64,7 +64,7 @@ public class Menu extends JFrame implements ActionListener
         width.setBounds(170,240,40,20);
         add(width);
 
-        JLabel heightLabel = new JLabel("¸ß¶È (10-25):");
+        JLabel heightLabel = new JLabel("é«˜åº¦ (10-25):");
         heightLabel.setBounds(70,260,90,20);
         add(heightLabel);
 
@@ -72,7 +72,7 @@ public class Menu extends JFrame implements ActionListener
         height.setBounds(170,260,40,20);
         add(height);
 
-        JLabel mineLabel = new JLabel("µØÀ× (10-100):");
+        JLabel mineLabel = new JLabel("åœ°é›· (10-100):");
         mineLabel.setBounds(70,280,90,20);
         add(mineLabel);
 
@@ -80,7 +80,7 @@ public class Menu extends JFrame implements ActionListener
         mines.setBounds(170,280,40,20);
         add(mines);
 
-        start = new JButton("¿ªÊ¼ÓÎÏ·");
+        start = new JButton("å¼€å§‹æ¸¸æˆ");
         start.setBounds(80,320,100,20);
         add(start);
 
@@ -138,7 +138,7 @@ public class Menu extends JFrame implements ActionListener
                 if(!checkValid(width.getText(), height.getText(), mines.getText()))
                 {
                     errorFlag = true;
-                    JOptionPane.showMessageDialog(null, "ÇëÊäÈëÕıÈ·µÄÊı×Ö!");
+                    JOptionPane.showMessageDialog(null, "è¯·è¾“å…¥æ­£ç¡®çš„æ•°å­—!");
 
                 } else {
                     boardWidth = Integer.parseInt(width.getText());
@@ -151,7 +151,7 @@ public class Menu extends JFrame implements ActionListener
             {
 
                 this.dispose();
-                GameBoard b = new GameBoard("É¨À×", boardWidth, boardHeight);
+                GameBoard b = new GameBoard("æ‰«é›·", boardWidth, boardHeight);
                 ProduceBombs bomb = new ProduceBombs(b, bombs);
                 ((SmartSquare) b.getSquareAt(0, 0)).setStartTime(System.currentTimeMillis());
             }
