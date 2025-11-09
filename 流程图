@@ -1,11 +1,11 @@
 @startuml
-' è®¾ç½®å›¾è¡¨æ ·å¼
+' ÉèÖÃÍ¼±íÑùÊ½
 skinparam sequenceArrowThickness 2
 skinparam roundcorner 20
 skinparam maxmessagesize 120
 skinparam sequenceParticipant bold
 
-actor User as "ç©å®¶"
+actor User as "Íæ¼Ò"
 
 participant Driver
 participant Menu
@@ -14,37 +14,37 @@ participant SmartSquare
 participant ProduceBombs
 participant CheckSquare
 
-' 1. æ¸¸æˆå¯åŠ¨
-group æ¸¸æˆå¯åŠ¨ä¸èœå•é€‰æ‹©
+' 1. ÓÎÏ·Æô¶¯
+group ÓÎÏ·Æô¶¯Óë²Ëµ¥Ñ¡Ôñ
     Driver -> Menu : <<create>>\nnew Menu("Minesweeper")
     activate Menu
-    Menu -> User : æ˜¾ç¤ºéš¾åº¦é€‰æ‹©èœå•
+    Menu -> User : ÏÔÊ¾ÄÑ¶ÈÑ¡Ôñ²Ëµ¥
     
-    User -> Menu : é€‰æ‹©éš¾åº¦å¹¶ç‚¹å‡»"å¼€å§‹æ¸¸æˆ"
+    User -> Menu : Ñ¡ÔñÄÑ¶È²¢µã»÷"¿ªÊ¼ÓÎÏ·"
     Menu -> Menu : actionPerformed(event)
-    Menu -> Menu : æ ¹æ®é€‰æ‹©è®¾ç½® width, height, bombs
-    Menu -> GameBoard : <<create>>\nnew GameBoard("è¸©é›·æ¸¸æˆ", width, height)
+    Menu -> Menu : ¸ù¾İÑ¡ÔñÉèÖÃ width, height, bombs
+    Menu -> GameBoard : <<create>>\nnew GameBoard("²ÈÀ×ÓÎÏ·", width, height)
     activate GameBoard
     
     loop height
         loop width
             GameBoard -> SmartSquare : <<create>>\nnew SmartSquare(x, y, this)
             activate SmartSquare
-            SmartSquare --> GameBoard : è¿”å›æ–¹å—å®ä¾‹
+            SmartSquare --> GameBoard : ·µ»Ø·½¿éÊµÀı
             deactivate SmartSquare
         end
     end
     
-    GameBoard --> Menu : è¿”å›æ¸¸æˆæ£‹ç›˜å®ä¾‹
+    GameBoard --> Menu : ·µ»ØÓÎÏ·ÆåÅÌÊµÀı
     deactivate GameBoard
     
     Menu -> ProduceBombs : <<create>>\nnew ProduceBombs(board, bombs)
     activate ProduceBombs
-    loop bombs æ¬¡
+    loop bombs ´Î
         ProduceBombs -> ProduceBombs : reproduceBomb()
         ProduceBombs -> GameBoard : getSquareAt(x, y)
         activate GameBoard
-        GameBoard --> ProduceBombs : è¿”å› SmartSquare
+        GameBoard --> ProduceBombs : ·µ»Ø SmartSquare
         deactivate GameBoard
         ProduceBombs -> SmartSquare : setBombExist(true)
         activate SmartSquare
@@ -54,7 +54,7 @@ group æ¸¸æˆå¯åŠ¨ä¸èœå•é€‰æ‹©
     
     Menu -> GameBoard : getSquareAt(0, 0)
     activate GameBoard
-    GameBoard --> Menu : è¿”å› SmartSquare
+    GameBoard --> Menu : ·µ»Ø SmartSquare
     deactivate GameBoard
     
     Menu -> SmartSquare : setStartTime(System.currentTimeMillis())
@@ -62,53 +62,53 @@ group æ¸¸æˆå¯åŠ¨ä¸èœå•é€‰æ‹©
     deactivate SmartSquare
     
     Menu -> Menu : dispose()
-    Menu --> User : å…³é—­èœå•, æ˜¾ç¤ºæ¸¸æˆæ£‹ç›˜
+    Menu --> User : ¹Ø±Õ²Ëµ¥, ÏÔÊ¾ÓÎÏ·ÆåÅÌ
     deactivate Menu
 end
 
-' 2. ç©å®¶æ¸¸æˆè¿‡ç¨‹
-group ç©å®¶è¿›è¡Œæ¸¸æˆ
-    User -> SmartSquare : å·¦é”®ç‚¹å‡»æ–¹å—
+' 2. Íæ¼ÒÓÎÏ·¹ı³Ì
+group Íæ¼Ò½øĞĞÓÎÏ·
+    User -> SmartSquare : ×ó¼üµã»÷·½¿é
     
-    ' Swing äº‹ä»¶æœºåˆ¶: JButton -> GameBoard.actionPerformed -> SmartSquare.clicked
-    note right of SmartSquare : Swingäº‹ä»¶è§¦å‘\nGameBoard.actionPerformed()
+    ' Swing ÊÂ¼ş»úÖÆ: JButton -> GameBoard.actionPerformed -> SmartSquare.clicked
+    note right of SmartSquare : SwingÊÂ¼ş´¥·¢\nGameBoard.actionPerformed()
     SmartSquare -> SmartSquare : clicked()
     activate SmartSquare
     
     SmartSquare -> CheckSquare : <<create>>\nnew CheckSquare(board)
     activate CheckSquare
     
-    alt ç‚¹å‡»åˆ°åœ°é›·
+    alt µã»÷µ½µØÀ×
         SmartSquare -> SmartSquare : thisSquareHasBomb == true
         SmartSquare -> SmartSquare : setImage("bombReveal.png")
         SmartSquare -> CheckSquare : showBomb(x, y)
-        SmartSquare -> SmartSquare : window("æ¸¸æˆç»“æŸ", ...)
+        SmartSquare -> SmartSquare : window("ÓÎÏ·½áÊø", ...)
         activate SmartSquare #FFCCCC
-            SmartSquare -> User : æ˜¾ç¤ºæ¸¸æˆå¤±è´¥å¯¹è¯æ¡†
-            User -> SmartSquare : é€‰æ‹©æ˜¯å¦é‡ç©
-            alt ç©å®¶é€‰æ‹©"æ˜¯"
+            SmartSquare -> User : ÏÔÊ¾ÓÎÏ·Ê§°Ü¶Ô»°¿ò
+            User -> SmartSquare : Ñ¡ÔñÊÇ·ñÖØÍæ
+            alt Íæ¼ÒÑ¡Ôñ"ÊÇ"
                 SmartSquare -> Menu : <<create>>\nnew Menu(...)
             end
             SmartSquare -> GameBoard : dispose()
             deactivate SmartSquare
-    else ç‚¹å‡»åˆ°å®‰å…¨æ–¹å—
-        SmartSquare -> CheckSquare : countBomb(x, y)\n(é€’å½’æ£€æŸ¥ç›¸é‚»æ–¹å—)
+    else µã»÷µ½°²È«·½¿é
+        SmartSquare -> CheckSquare : countBomb(x, y)\n(µİ¹é¼ì²éÏàÁÚ·½¿é)
         CheckSquare -> SmartSquare : isSuccess()
         
-        alt æ¸¸æˆèƒœåˆ©
-            SmartSquare -> SmartSquare : window("æ­å–œ", ...)
+        alt ÓÎÏ·Ê¤Àû
+            SmartSquare -> SmartSquare : window("¹§Ï²", ...)
             activate SmartSquare #CCFFCC
-                SmartSquare -> User : æ˜¾ç¤ºæ¸¸æˆèƒœåˆ©å¯¹è¯æ¡†
-                User -> SmartSquare : é€‰æ‹©æ˜¯å¦é‡ç©
-                 alt ç©å®¶é€‰æ‹©"æ˜¯"
+                SmartSquare -> User : ÏÔÊ¾ÓÎÏ·Ê¤Àû¶Ô»°¿ò
+                User -> SmartSquare : Ñ¡ÔñÊÇ·ñÖØÍæ
+                 alt Íæ¼ÒÑ¡Ôñ"ÊÇ"
                     SmartSquare -> Menu : <<create>>\nnew Menu(...)
                 end
                 SmartSquare -> GameBoard : dispose()
             deactivate SmartSquare
-        else æ¸¸æˆç»§ç»­
-            CheckSquare --> SmartSquare : è¿”å›
+        else ÓÎÏ·¼ÌĞø
+            CheckSquare --> SmartSquare : ·µ»Ø
             deactivate CheckSquare
-            SmartSquare --> User : æ˜¾ç¤ºæ•°å­—æˆ–ç©ºç™½åŒºåŸŸ
+            SmartSquare --> User : ÏÔÊ¾Êı×Ö»ò¿Õ°×ÇøÓò
         end
     end
     deactivate SmartSquare

@@ -5,6 +5,6 @@ public class Driver
 {
 	public static void main(String[] Args)
 	{
-		Menu menu = new Menu("æ‰«é›·");
+		Menu menu = new Menu("É¨À×");
 	}
 }

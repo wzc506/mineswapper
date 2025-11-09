@@ -1,5 +1,5 @@
 @startuml
-' è®¾ç½®å›¾è¡¨æ ·å¼
+' ÉèÖÃÍ¼±íÑùÊ½
 skinparam classAttributeIconSize 0
 skinparam roundcorner 20
 hide empty members
@@ -16,7 +16,7 @@ class Menu {
     - custom: JRadioButton
     + actionPerformed(ActionEvent e)
 }
-note right of Menu : ç»§æ‰¿è‡ª JFrame
+note right of Menu : ¼Ì³Ğ×Ô JFrame
 
 class GameBoard {
     - boardWidth: int
@@ -24,7 +24,7 @@ class GameBoard {
     - board: GameSquare[][]
     + getSquareAt(int x, int y): GameSquare
 }
-note right of GameBoard : ç»§æ‰¿è‡ª JFrame
+note right of GameBoard : ¼Ì³Ğ×Ô JFrame
 
 abstract class GameSquare {
     # xLocation: int
@@ -32,7 +32,7 @@ abstract class GameSquare {
     + setImage(String filename)
     + {abstract} clicked()
 }
-note left of GameSquare : ç»§æ‰¿è‡ª JButton
+note left of GameSquare : ¼Ì³Ğ×Ô JButton
 
 class SmartSquare {
     - thisSquareHasBomb: boolean
@@ -64,15 +64,15 @@ interface TimeChecker {
 
 interface MouseListener <<interface>>
 
-' --- å…³ç³»å®šä¹‰ ---
+' --- ¹ØÏµ¶¨Òå ---
 
-' ç»§æ‰¿ä¸å®ç°
+' ¼Ì³ĞÓëÊµÏÖ
 GameSquare <|-- SmartSquare
 Bomb <|-- ProduceBombs
 TimeChecker <|.. SmartSquare
 MouseListener <|.. SmartSquare
 
-' ä¾èµ–ä¸ç»„åˆ
+' ÒÀÀµÓë×éºÏ
 Driver ..> Menu : creates
 Menu ..> GameBoard : creates
 GameBoard "1" *-- "many" GameSquare : contains
