@@ -13,7 +13,6 @@ public class CheckSquare
     public CheckSquare(GameBoard board)
     {
         this.board = board;
-        // Both height and width of the board should remove its padding values.
         boardHeight = (board.getHeight() - 20) / 20;
         boardWidth = (board.getWidth() - 20) / 20;
     }
@@ -25,7 +24,6 @@ public class CheckSquare
 
     protected boolean isSuccess()
     {
-        // Ensure count start at 0 once this method is invoked.
         int count = 0;
 
         for (int y = 0; y < boardHeight; y++)
@@ -88,14 +86,14 @@ public class CheckSquare
             currentObject.setImage("images/" + count + ".png");
         else {
             currentObject.setImage("images/0.png");
-            countBomb(currentX - 1, currentY -1); // Upper left
-            countBomb(currentX, currentY -1); // Above
-            countBomb(currentX + 1, currentY -1); // Upper right
-            countBomb(currentX - 1, currentY); // Left side
-            countBomb(currentX + 1, currentY); // Right side
-            countBomb(currentX - 1, currentY + 1); // Lower left
-            countBomb(currentX, currentY + 1); // Below
-            countBomb(currentX + 1, currentY + 1); // Lower right
+            countBomb(currentX - 1, currentY -1); 
+            countBomb(currentX, currentY -1); 
+            countBomb(currentX + 1, currentY -1);
+            countBomb(currentX - 1, currentY); 
+            countBomb(currentX + 1, currentY); 
+            countBomb(currentX - 1, currentY + 1); 
+            countBomb(currentX, currentY + 1); 
+            countBomb(currentX + 1, currentY + 1);
         }
     }
 }

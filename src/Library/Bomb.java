@@ -12,7 +12,6 @@ public abstract class Bomb
     public Bomb(GameBoard board)
     {
         this.board = board;
-        // Both height and width of the board should remove its padding values.
         boardHeight = (board.getHeight() - 20) / 20;
         boardWidth = (board.getWidth() - 20) / 20;
     }
