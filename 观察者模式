@@ -1,0 +1,59 @@
+@startuml
+
+  interface MouseListener {
+    + mouseClicked(MouseEvent)
+    + mousePressed(MouseEvent)
+    + mouseReleased(MouseEvent)
+    + mouseEntered(MouseEvent)
+    + mouseExited(MouseEvent)
+  }
+  class MouseEvent
+
+
+
+  abstract class GameSquare {
+    + GameSquare(x:int,y:int,filename:String,board:GameBoard)
+    + setImage(filename:String)
+    + clicked()
+  }
+
+  class SmartSquare {
+    - thisSquareHasBomb : boolean
+    - guessThisSquareIsBomb : boolean
+    - thisSquareHasTraversed : boolean
+    - startTime : long
+    + SmartSquare(x:int,y:int,board:GameBoard)
+    + setBombExist(result:boolean)
+    + getBombExist():boolean
+    + getTraverse():boolean
+    + setTraverse(result:boolean)
+    + clicked()
+    + mouseClicked(e:MouseEvent)
+    + mousePressed(e:MouseEvent)
+    + mouseReleased(e:MouseEvent)
+    + mouseEntered(e:MouseEvent)
+    + mouseExited(e:MouseEvent)
+  }
+
+  class GameBoard {
+    - board: GameSquare[][]
+    + getSquareAt(x:int,y:int):GameSquare
+  }
+
+  GameSquare <|-- SmartSquare
+  GameBoard "1" o-- "*" GameSquare : contains
+
+' Swing/AWT component acting as event source
+class JButton <<EventSource>> {
+  + addMouseListener(MouseListener)
+  + removeMouseListener(MouseListener)
+  -- 当鼠标事件发生时，调用已注册观察者的方法（notify）
+}
+
+' 关联关系
+GameSquare ..|> JButton : extends (在实现中间接继承)
+SmartSquare ..|> MouseListener
+JButton --> MouseListener : notify(MouseEvent)
+SmartSquare ..> JButton : registers via addMouseListener(this)
+
+@enduml

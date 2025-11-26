@@ -1,0 +1,48 @@
+@startuml
+  abstract class GameSquare {
+    - xLocation : int
+    - yLocation : int
+    - board : GameBoard
+    + GameSquare(x:int, y:int, filename:String, board:GameBoard)
+    + setImage(filename:String) : void
+    + clicked() : void <<abstract>>    -- 模板方法（由子类实现）
+  }
+
+
+  class SmartSquare {
+    - thisSquareHasBomb : boolean
+    - guessThisSquareIsBomb : boolean
+    - thisSquareHasTraversed : boolean
+    - startTime : long
+    + SmartSquare(x:int, y:int, board:GameBoard)
+    + clicked() : void
+  }
+
+  class GameBoard {
+    - board : GameSquare[][]
+    + getSquareAt(x:int, y:int) : GameSquare
+  }
+
+  GameSquare <|-- SmartSquare
+  GameBoard "1" o-- "*" GameSquare : contains
+
+  abstract class Bomb {
+    - board : UserInterface.GameBoard
+    - boardHeight : int
+    - boardWidth : int
+    + Bomb(board:UserInterface.GameBoard)
+    + reproduceBomb() : void <<abstract>>   -- 模板方法（由子类实现）
+  }
+
+  class ProduceBombs {
+    + ProduceBombs(board:UserInterface.GameBoard, number:int)
+    + reproduceBomb() : void
+  }
+
+  Bomb <|-- ProduceBombs
+  ProduceBombs ..> UserInterface.GameBoard : uses
+
+interface TimeChecker
+SmartSquare ..|> TimeChecker
+
+@enduml
