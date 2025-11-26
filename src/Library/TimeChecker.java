@@ -8,8 +8,8 @@ public interface TimeChecker
 
         int ms = (int) time;
         int sec = ms / CONVERT_TO_SEC;
-        int min = sec / CONVERT_TO_OTHERS; // Seconds convert to minutes.
-        int hr = min / CONVERT_TO_OTHERS; // Minutes convert to hours.
+        int min = sec / CONVERT_TO_OTHERS;
+        int hr = min / CONVERT_TO_OTHERS; 
 
         if (hr == 0)
         {
