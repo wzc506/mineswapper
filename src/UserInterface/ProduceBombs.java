@@ -21,8 +21,8 @@ public final class ProduceBombs {
     }
 
     private boolean placeOne(GameBoard board) {
-        int boardWidth = (board.getWidth() - 20) / 20;
-        int boardHeight = (board.getHeight() - 20) / 20;
+        int boardWidth = board.getBoardWidth();
+        int boardHeight = board.getBoardHeight();
 
         int x = random.nextInt(boardWidth);
         int y = random.nextInt(boardHeight);

@@ -1,6 +1,7 @@
 package UserInterface;
 import javax.swing.*;
 
+import Library.MusicPlayer;
 import Library.TimeChecker;
 
 import java.awt.event.MouseEvent;
@@ -100,6 +101,8 @@ public class SmartSquare extends GameSquare implements MouseListener
 
 	public void window(String msg, String title, Icon img)
 	{
+		// 游戏结束时停止音乐
+		MusicPlayer.getInstance().stop();
 
 		int choose = JOptionPane.showConfirmDialog(board, msg, title,
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,img);

@@ -13,8 +13,8 @@ public class CheckSquare
     public CheckSquare(GameBoard board)
     {
         this.board = board;
-        boardHeight = (board.getHeight() - 20) / 20;
-        boardWidth = (board.getWidth() - 20) / 20;
+        boardHeight = board.getBoardHeight();
+        boardWidth = board.getBoardWidth();
     }
 
     private boolean hasKickedBoundary(int x, int y)

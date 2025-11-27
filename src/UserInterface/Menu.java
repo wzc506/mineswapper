@@ -1,6 +1,7 @@
 package UserInterface;
 import javax.swing.*;
 
+import Library.MusicPlayer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
@@ -10,6 +11,9 @@ public class Menu extends JFrame implements ActionListener
     private JButton start;
     private JRadioButton beginner, intermediate, advanced, custom;
     private JTextField width, height, mines;
+    private JCheckBox musicCheckBox;
+    private JComboBox<String> musicSelector;
+    private JSlider volumeSlider;
 
     public Menu(String title)
     {
@@ -80,8 +84,39 @@ public class Menu extends JFrame implements ActionListener
         mines.setBounds(170,280,40,20);
         add(mines);
 
+        musicCheckBox = new JCheckBox("播放背景音乐", false);
+        musicCheckBox.setBounds(40,300,120,20);
+        add(musicCheckBox);
+
+        // 音乐选择下拉框
+        JLabel musicLabel = new JLabel("选择音乐:");
+        musicLabel.setBounds(40,325,70,20);
+        add(musicLabel);
+
+        musicSelector = new JComboBox<>();
+        musicSelector.addItem("随机播放");
+        // 从 MusicPlayer 获取音乐列表
+        for (String musicName : MusicPlayer.getInstance().getMusicNames()) {
+            musicSelector.addItem(musicName);
+        }
+        musicSelector.setBounds(110,325,150,20);
+        add(musicSelector);
+
+        // 音量控制
+        JLabel volumeLabel = new JLabel("音量:");
+        volumeLabel.setBounds(40,350,40,20);
+        add(volumeLabel);
+
+        volumeSlider = new JSlider(0, 100, 80);
+        volumeSlider.setBounds(80,350,150,20);
+        volumeSlider.addChangeListener(e -> {
+            float volume = volumeSlider.getValue() / 100.0f;
+            MusicPlayer.getInstance().setVolume(volume);
+        });
+        add(volumeSlider);
+
         start = new JButton("开始游戏");
-        start.setBounds(80,320,100,20);
+        start.setBounds(80,385,100,20);
         add(start);
 
         width.setEditable(false);
@@ -101,7 +136,7 @@ public class Menu extends JFrame implements ActionListener
         group.add(custom);
 
         beginner.setSelected(true);
-        setSize(280,400);
+        setSize(280,470);
         setLayout(null);
         setVisible(true);
         setResizable(false);
@@ -149,6 +184,15 @@ public class Menu extends JFrame implements ActionListener
 
             if(!errorFlag)
             {
+                // 根据复选框状态控制音乐播放
+                if (musicCheckBox.isSelected()) {
+                    // 获取选择的音乐索引（0 是"随机播放"，所以实际索引要减1）
+                    int selectedMusicIndex = musicSelector.getSelectedIndex() - 1;
+                    MusicPlayer.getInstance().setSelectedIndex(selectedMusicIndex);
+                    MusicPlayer.getInstance().play();
+                } else {
+                    MusicPlayer.getInstance().stop();
+                }
 
                 this.dispose();
                 GameBoard b = new GameBoard("扫雷", boardWidth, boardHeight);
