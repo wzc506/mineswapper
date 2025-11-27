@@ -1,38 +1,37 @@
 package UserInterface;
 import java.util.Random;
 
-import Library.Bomb;
+public final class ProduceBombs {
+    private static final ProduceBombs INSTANCE = new ProduceBombs();
+    private final Random random = new Random();
 
-public class ProduceBombs extends Bomb
-{
-    public ProduceBombs(GameBoard board, int number)
-    {
+    private ProduceBombs() {}
 
-        super(board);
-
-        int count =0;
-
-        do {
-            reproduceBomb();
-            count++;
-        }while (count < number);
+    public static ProduceBombs getInstance() {
+        return INSTANCE;
     }
 
-    public void reproduceBomb()
-    {
-        Random r = new Random();
+    public void placeBombs(GameBoard board, int number) {
+        int placed = 0;
+        while (placed < number) {
+            if (placeOne(board)) {
+                placed++;
+            }
+        }
+    }
 
-        int xLocation = r.nextInt(boardWidth);
-        int yLocation = r.nextInt(boardHeight);
+    private boolean placeOne(GameBoard board) {
+        int boardWidth = (board.getWidth() - 20) / 20;
+        int boardHeight = (board.getHeight() - 20) / 20;
 
-        SmartSquare square = (SmartSquare) board.getSquareAt(xLocation, yLocation);
-
-        if (!square.getBombExist())
-        {
+        int x = random.nextInt(boardWidth);
+        int y = random.nextInt(boardHeight);
+        SmartSquare square = (SmartSquare) board.getSquareAt(x, y);
+        if (!square.getBombExist()) {
             square.setBombExist(true);
             square.setTraverse(true);
-        } else {
-            reproduceBomb();
+            return true;
         }
+        return false;
     }
 }

@@ -152,7 +152,7 @@ public class Menu extends JFrame implements ActionListener
 
                 this.dispose();
                 GameBoard b = new GameBoard("扫雷", boardWidth, boardHeight);
-                ProduceBombs bomb = new ProduceBombs(b, bombs);
+                ProduceBombs.getInstance().placeBombs(b, bombs);
                 ((SmartSquare) b.getSquareAt(0, 0)).setStartTime(System.currentTimeMillis());
             }
 

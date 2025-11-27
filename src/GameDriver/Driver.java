@@ -3,8 +3,8 @@ import UserInterface.Menu;
 
 public class Driver
 {
-	public static void main(String[] Args)
-	{
-		Menu menu = new Menu("扫雷");
-	}
+    public static void main(String[] Args)
+    {
+        new Menu("扫雷");
+    }
 }

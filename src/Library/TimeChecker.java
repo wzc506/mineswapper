@@ -1,7 +1,18 @@
 package Library;
-public interface TimeChecker
-{
-    static String calculateTime(long time)
+public final class TimeChecker {
+    private static final TimeChecker INSTANCE = new TimeChecker();
+    
+    private TimeChecker() {}
+    
+    public static TimeChecker getInstance() {
+        return INSTANCE;
+    }
+
+    public String format(long time) {
+        return calculateTime(time);
+    }
+
+    public static String calculateTime(long time)
     {
         int CONVERT_TO_SEC = 1000;
         int CONVERT_TO_OTHERS = 60;

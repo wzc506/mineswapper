@@ -6,7 +6,7 @@ import Library.TimeChecker;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class SmartSquare extends GameSquare implements MouseListener, TimeChecker
+public class SmartSquare extends GameSquare implements MouseListener
 {
 	private boolean thisSquareHasBomb;
 
@@ -72,9 +72,8 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 
 	public void clicked()
 	{
-
 		CheckSquare cq = new CheckSquare(board);
-
+		
 		guessThisSquareIsBomb = false;
 
 		if(thisSquareHasBomb)
@@ -82,7 +81,7 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 			setImage("images/bombReveal.png");
 			long costTime = System.currentTimeMillis() - ((SmartSquare) board.getSquareAt(0, 0)).getStartTime();
 			cq.showBomb(xLocation, yLocation);
-			window("你输了！用时 " + TimeChecker.calculateTime(costTime) + ". 你想再试一次吗?", "游戏结束",
+			window("你输了！用时 " + TimeChecker.getInstance().format(costTime) + ". 你想再试一次吗?", "游戏结束",
 					new ImageIcon("images/cai.jpg"));
 		} else{
 			thisSquareHasTraversed = false;
@@ -92,7 +91,7 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 			if (cq.isSuccess()) {
 				long costTime = System.currentTimeMillis() - ((SmartSquare) board.getSquareAt(0, 0)).getStartTime();
 				cq.showBomb(xLocation, yLocation);
-				window("你赢了！用时 " + TimeChecker.calculateTime(costTime) +
+				window("你赢了！用时 " + TimeChecker.getInstance().format(costTime) +
                         "! 你想再试一次吗?","恭喜",
 						new ImageIcon("images/passFace.jpg"));
 			}
@@ -107,7 +106,7 @@ public class SmartSquare extends GameSquare implements MouseListener, TimeChecke
 
 		if (choose == JOptionPane.YES_OPTION)
 		{
-			Menu menu = new Menu("扫雷");
+			new Menu("扫雷");
 		}
 
 		board.dispose();

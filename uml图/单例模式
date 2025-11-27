@@ -1,0 +1,53 @@
+@startuml
+
+' ============ 包结构 ============
+package GameDriver {
+  class Driver {
+    + main(String[] args)
+  }
+}
+
+package UserInterface {
+  class Menu {
+    + Menu(String title)
+    + void actionPerformed(ActionEvent e)
+  }
+
+  class GameBoard {
+    + GameBoard(String title, int width, int height)
+  }
+
+  class SmartSquare {
+    + void clicked()
+  }
+
+  class ProduceBombs <<singleton>> {
+    - static final ProduceBombs INSTANCE
+    - Random random
+    - ProduceBombs()
+    + static ProduceBombs getInstance()
+    + void placeBombs(GameBoard board, int number)
+    - boolean placeOne(GameBoard board)
+  }
+}
+
+package Library {
+  class TimeChecker <<singleton>> {
+    - static final TimeChecker INSTANCE
+    - TimeChecker()
+    + static TimeChecker getInstance()
+    + String format(long time)
+    + static String calculateTime(long time)
+  }
+}
+
+' ============ 关系 ============
+Driver -> Menu : create
+Menu -> GameBoard : create
+Menu -> ProduceBombs : getInstance().placeBombs(...)
+ProduceBombs -> GameBoard
+ProduceBombs -> SmartSquare
+
+SmartSquare -> TimeChecker : getInstance().format(...)
+
+@enduml
