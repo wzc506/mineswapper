@@ -1,0 +1,95 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Driver {
+  + {static} main(String[] Args)
+}
+
+class Menu extends JFrame {
+  - start : JButton
+  - beginner : JRadioButton
+  - intermediate : JRadioButton
+  - advanced : JRadioButton
+  - custom : JRadioButton
+  - width : JTextField
+  - height : JTextField
+  - mines : JTextField
+  + Menu(String title)
+  + actionPerformed(ActionEvent e)
+  - checkValid(String, String, String) : boolean
+}
+
+class GameBoard extends JFrame {
+  - boardHeight : int
+  - boardWidth : int
+  - numberOfBombs : int
+  - board : GameSquare[][]
+  - checker : CheckSquare
+  - startTime : long
+  - gameEnded : boolean
+  + GameBoard(String title, int width, int height, int bombs)
+  - handleSquareClick(GameSquare, int, int)
+  - endGame(boolean win, int x, int y)
+  + getSquareAt(int x, int y) : GameSquare
+  + getBoardHeight() : int
+  + getBoardWidth() : int
+  + getNumberOfBombs() : int
+}
+
+class GameSquare extends JButton {
+  - xLocation : int
+  - yLocation : int
+  - thisSquareHasBomb : boolean
+  - guessThisSquareIsBomb : boolean
+  - thisSquareHasTraversed : boolean
+  + GameSquare(int x, int y)
+  + getXLocation() : int
+  + getYLocation() : int
+  + setImage(String filename)
+  # setBombExist(boolean result)
+  # getBombExist() : boolean
+  # getTraverse() : boolean
+  # setTraverse(boolean result)
+  # getGuessThisSquareIsBomb() : boolean
+  # setGuessThisSquareIsBomb(boolean guess)
+}
+
+class BombPlacer {
+  - board : GameBoard
+  - boardHeight : int
+  - boardWidth : int
+  - numberOfBombs : int
+  + BombPlacer(GameBoard board, int number)
+  - placeBombs()
+}
+
+class CheckSquare {
+  - board : GameBoard
+  - boardHeight : int
+  - boardWidth : int
+  - {static} distantX : int[]
+  - {static} distantY : int[]
+  + CheckSquare(GameBoard board)
+  - hasKickedBoundary(int x, int y) : boolean
+  # isSuccess() : boolean
+  # showBomb(int currentX, int currentY)
+  # countBomb(int currentX, int currentY)
+}
+
+interface TimeChecker {
+  + {static} calculateTime(long time) : String
+}
+
+Driver ..> Menu : Creates
+Menu ..> GameBoard : Creates
+GameBoard ..> Menu : Creates (on restart)
+GameBoard o-- "1" CheckSquare : Contains
+GameBoard o-- "1" BombPlacer : Creates & Uses
+GameBoard o-- "*" GameSquare : Contains
+GameBoard ..> TimeChecker : Uses
+BombPlacer ..> GameBoard : Uses
+BombPlacer ..> GameSquare : Modifies
+CheckSquare ..> GameBoard : Uses
+CheckSquare ..> GameSquare : Modifies
+
+@enduml
