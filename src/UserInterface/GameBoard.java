@@ -12,6 +12,8 @@ public class GameBoard extends JFrame implements ActionListener
 
 	private int boardHeight;
 	private int boardWidth;
+	private int bombCount; // 炸弹数量
+	private String modeName; // 模式名称
 	private GameSquare[][] board;
 	
 	private boolean isMusicPlaying = true;
@@ -103,6 +105,26 @@ public class GameBoard extends JFrame implements ActionListener
 	public int getBoardHeight()
 	{
 		return boardHeight;
+	}
+
+	public void setBombCount(int count)
+	{
+		this.bombCount = count;
+	}
+
+	public int getBombCount()
+	{
+		return bombCount;
+	}
+
+	public void setModeName(String name)
+	{
+		this.modeName = name;
+	}
+
+	public String getModeName()
+	{
+		return modeName;
 	}
 
 	public void actionPerformed(ActionEvent e)

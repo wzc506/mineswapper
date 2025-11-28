@@ -1,12 +1,22 @@
 package UserInterface;
 import javax.swing.*;
 
+import Library.GameMode;
+import Library.GameModeFactory;
 import Library.MusicPlayer;
+import Library.RecordManager;
+import Library.RecordObserver;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.regex.Pattern;
 
-public class Menu extends JFrame implements ActionListener
+/**
+ * 游戏菜单界面
+ * 实现 RecordObserver 接口，当记录更新时自动刷新显示
+ */
+public class Menu extends JFrame implements ActionListener, RecordObserver
 {
     private JButton start;
     private JRadioButton beginner, intermediate, advanced, custom;
@@ -14,6 +24,8 @@ public class Menu extends JFrame implements ActionListener
     private JCheckBox musicCheckBox;
     private JComboBox<String> musicSelector;
     private JSlider volumeSlider;
+    private JTextArea recordsArea;
+    private String currentModeName = "新手"; // 当前选中的模式名称
 
     public Menu(String title)
     {
@@ -116,8 +128,28 @@ public class Menu extends JFrame implements ActionListener
         add(volumeSlider);
 
         start = new JButton("开始游戏");
-        start.setBounds(80,385,100,20);
+        start.setBounds(80,385,100,25);
         add(start);
+
+        // 右侧记录显示区域
+        JLabel recordTitle = new JLabel("═══ 最佳记录 ═══");
+        recordTitle.setBounds(280, 10, 150, 20);
+        recordTitle.setFont(new java.awt.Font("微软雅黑", java.awt.Font.BOLD, 12));
+        add(recordTitle);
+
+        recordsArea = new JTextArea();
+        recordsArea.setEditable(false);
+        recordsArea.setFont(new java.awt.Font("微软雅黑", java.awt.Font.PLAIN, 11));
+        recordsArea.setBackground(getBackground());
+        recordsArea.setBorder(null);
+        
+        JScrollPane scrollPane = new JScrollPane(recordsArea);
+        scrollPane.setBounds(270, 35, 180, 370);
+        scrollPane.setBorder(BorderFactory.createLineBorder(java.awt.Color.LIGHT_GRAY));
+        add(scrollPane);
+        
+        // 初始化记录显示（默认显示新手模式）
+        updateRecordsDisplay("新手");
 
         width.setEditable(false);
         height.setEditable(false);
@@ -136,11 +168,32 @@ public class Menu extends JFrame implements ActionListener
         group.add(custom);
 
         beginner.setSelected(true);
-        setSize(280,470);
+        setSize(470, 470);
         setLayout(null);
         setVisible(true);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        // 注册为记录观察者
+        RecordManager.getInstance().addObserver(this);
+        
+        // 窗口关闭时移除观察者
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                RecordManager.getInstance().removeObserver(Menu.this);
+            }
+        });
+    }
+    
+    /**
+     * 观察者模式回调 - 当记录更新时自动刷新显示
+     */
+    @Override
+    public void onRecordUpdated(String modeName) {
+        if (modeName.equals(currentModeName)) {
+            updateRecordsDisplay(modeName);
+        }
     }
 
     public void actionPerformed(ActionEvent e)
@@ -150,61 +203,85 @@ public class Menu extends JFrame implements ActionListener
             width.setEditable(true);
             height.setEditable(true);
             mines.setEditable(true);
-        } else if (e.getSource() == start) {
-            int boardWidth = 0;
-            int boardHeight = 0;
-            int bombs = 0;
-            boolean errorFlag = false;
-
-            if (beginner.isSelected())
-            {
-                boardWidth = 10;
-                boardHeight = 10;
-                bombs = 10;
-            } else if (intermediate.isSelected()) {
-                boardWidth = 16;
-                boardHeight = 16;
-                bombs = 40;
-            } else if (advanced.isSelected()) {
-                boardWidth = 30;
-                boardHeight = 25;
-                bombs = 100;
-            } else {
-                if(!checkValid(width.getText(), height.getText(), mines.getText()))
-                {
-                    errorFlag = true;
-                    JOptionPane.showMessageDialog(null, "请输入正确的数字!");
-
-                } else {
-                    boardWidth = Integer.parseInt(width.getText());
-                    boardHeight = Integer.parseInt(height.getText());
-                    bombs = Integer.parseInt(mines.getText());
-                }
-            }
-
-            if(!errorFlag)
-            {
-                // 根据复选框状态控制音乐播放
-                if (musicCheckBox.isSelected()) {
-                    // 获取选择的音乐索引（0 是"随机播放"，所以实际索引要减1）
-                    int selectedMusicIndex = musicSelector.getSelectedIndex() - 1;
-                    MusicPlayer.getInstance().setSelectedIndex(selectedMusicIndex);
-                    MusicPlayer.getInstance().play();
-                } else {
-                    MusicPlayer.getInstance().stop();
-                }
-
-                this.dispose();
-                GameBoard b = new GameBoard("扫雷", boardWidth, boardHeight);
-                ProduceBombs.getInstance().placeBombs(b, bombs);
-                ((SmartSquare) b.getSquareAt(0, 0)).setStartTime(System.currentTimeMillis());
-            }
-
-        } else{
+            currentModeName = "自定义";
+            updateRecordsDisplay(currentModeName);
+        } else if (e.getSource() == beginner) {
             width.setEditable(false);
             height.setEditable(false);
             mines.setEditable(false);
+            currentModeName = GameModeFactory.createMode(GameModeFactory.BEGINNER).getName();
+            updateRecordsDisplay(currentModeName);
+        } else if (e.getSource() == intermediate) {
+            width.setEditable(false);
+            height.setEditable(false);
+            mines.setEditable(false);
+            currentModeName = GameModeFactory.createMode(GameModeFactory.INTERMEDIATE).getName();
+            updateRecordsDisplay(currentModeName);
+        } else if (e.getSource() == advanced) {
+            width.setEditable(false);
+            height.setEditable(false);
+            mines.setEditable(false);
+            currentModeName = GameModeFactory.createMode(GameModeFactory.ADVANCED).getName();
+            updateRecordsDisplay(currentModeName);
+        } else if (e.getSource() == start) {
+            startGame();
         }
+    }
+    
+    /**
+     * 开始游戏 - 使用工厂方法模式创建游戏模式
+     */
+    private void startGame() {
+        GameMode mode;
+        boolean errorFlag = false;
+
+        if (beginner.isSelected()) {
+            mode = GameModeFactory.createMode(GameModeFactory.BEGINNER);
+        } else if (intermediate.isSelected()) {
+            mode = GameModeFactory.createMode(GameModeFactory.INTERMEDIATE);
+        } else if (advanced.isSelected()) {
+            mode = GameModeFactory.createMode(GameModeFactory.ADVANCED);
+        } else {
+            // 自定义模式
+            if (!checkValid(width.getText(), height.getText(), mines.getText())) {
+                JOptionPane.showMessageDialog(null, "请输入正确的数字!");
+                return;
+            }
+            int customWidth = Integer.parseInt(width.getText());
+            int customHeight = Integer.parseInt(height.getText());
+            int customBombs = Integer.parseInt(mines.getText());
+            mode = GameModeFactory.createCustomMode(customWidth, customHeight, customBombs);
+        }
+
+        // 根据复选框状态控制音乐播放
+        if (musicCheckBox.isSelected()) {
+            int selectedMusicIndex = musicSelector.getSelectedIndex() - 1;
+            MusicPlayer.getInstance().setSelectedIndex(selectedMusicIndex);
+            MusicPlayer.getInstance().play();
+        } else {
+            MusicPlayer.getInstance().stop();
+        }
+
+        // 移除观察者
+        RecordManager.getInstance().removeObserver(this);
+        this.dispose();
+        
+        // 使用工厂模式创建的 GameMode 对象启动游戏
+        GameBoard b = new GameBoard("扫雷", mode.getWidth(), mode.getHeight());
+        b.setBombCount(mode.getBombs());
+        b.setModeName(mode.getName());
+        ProduceBombs.getInstance().placeBombs(b, mode.getBombs());
+        ((SmartSquare) b.getSquareAt(0, 0)).setStartTime(System.currentTimeMillis());
+    }
+
+    /**
+     * 更新右侧记录显示区域
+     * @param modeName 当前选择的模式名称
+     */
+    private void updateRecordsDisplay(String modeName) {
+        String content = RecordManager.getInstance().getFormattedRecords(modeName);
+        recordsArea.setText(content);
+        recordsArea.setCaretPosition(0); // 滚动到顶部
     }
 
     private boolean checkValid(String bWidth, String bHeight, String bomb)

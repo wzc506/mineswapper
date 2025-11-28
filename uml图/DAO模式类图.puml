@@ -1,0 +1,122 @@
+@startuml DAO模式类图
+
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam packageStyle rectangle
+
+package "业务层 (Business Layer)" #LightBlue {
+    class Menu {
+        - recordManager: RecordManager
+        --
+        + displayRecords()
+        + selectMode()
+    }
+    
+    class SmartSquare {
+        - recordManager: RecordManager
+        --
+        + checkWin()
+        + saveRecord()
+    }
+    
+    note bottom of Menu
+        业务组件只关心
+        数据操作，不关心
+        数据如何存储
+    end note
+}
+
+package "DAO层 (Data Access Layer)" #LightGreen {
+    interface RecordDAO <<interface>> {
+        + addRecord(modeName: String, time: long): int
+        + getRecords(modeName: String): List<Long>
+        + getBestRecord(modeName: String): Long
+        + getFormattedRecords(modeName: String): String
+        + clearAllRecords()
+    }
+    
+    class RecordManager <<DAO>> <<Singleton>> {
+        - {static} INSTANCE: RecordManager
+        - {static} RECORD_FILE: String = "records.dat"
+        - {static} MAX_RECORDS: int = 10
+        - records: Map<String, List<Long>>
+        - observers: List<RecordObserver>
+        ==
+        - RecordManager()
+        + {static} getInstance(): RecordManager
+        --
+        <b>CRUD 操作</b>
+        + addRecord(modeName: String, time: long): int
+        + getRecords(modeName: String): List<Long>
+        + getBestRecord(modeName: String): Long
+        + getFormattedRecords(modeName: String): String
+        + clearAllRecords()
+        --
+        <b>数据持久化</b>
+        - loadRecords()
+        - saveRecords()
+        --
+        <b>观察者管理</b>
+        + addObserver(observer: RecordObserver)
+        + removeObserver(observer: RecordObserver)
+        - notifyObservers(modeName: String)
+    }
+}
+
+package "数据传输对象 (DTO)" #LightYellow {
+    class GameRecord <<DTO>> {
+        - modeName: String
+        - time: long
+        - rank: int
+        --
+        + getModeName(): String
+        + getTime(): long
+        + getRank(): int
+    }
+    
+    note bottom of GameRecord
+        封装游戏记录数据
+        在各层之间传递
+    end note
+}
+
+package "数据存储层 (Storage Layer)" #LightGray {
+    class "records.dat" as RecordFile <<File>> {
+        序列化存储
+        Map<String, List<Long>>
+    }
+    
+    class ObjectInputStream {
+        + readObject(): Object
+    }
+    
+    class ObjectOutputStream {
+        + writeObject(obj: Object)
+    }
+}
+
+' 关系
+Menu --> RecordManager : 获取记录
+SmartSquare --> RecordManager : 保存记录
+
+RecordDAO <|.. RecordManager : implements
+
+RecordManager --> GameRecord : 使用
+RecordManager --> ObjectInputStream : 读取数据
+RecordManager --> ObjectOutputStream : 写入数据
+ObjectInputStream --> RecordFile : 从文件读取
+ObjectOutputStream --> RecordFile : 写入文件
+
+' DAO模式说明
+note right of RecordManager
+    <b>DAO 模式核心实现</b>
+    ─────────────────
+    1. 封装数据访问逻辑
+    2. 提供统一的 CRUD 接口
+    3. 隐藏数据存储细节
+    4. 结合单例模式确保唯一实例
+    5. 结合观察者模式自动通知更新
+end note
+
+@enduml

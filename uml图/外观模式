@@ -1,0 +1,57 @@
+@startuml 
+
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+' 客户端
+class "客户端\n(Menu/GameBoard)" as Client #LightBlue {
+    简单调用外观类提供的方法
+}
+
+' 外观类
+class MusicPlayer <<Facade>> #LightGreen {
+    <b>简化的接口</b>
+    --
+    + play()
+    + stop()
+    + pause()
+    + resume()
+    + setVolume(volume)
+    + playNext()
+    + getMusicNames()
+}
+
+' 子系统
+rectangle "复杂子系统\n(javax.sound.sampled)" #LightYellow {
+    class AudioSystem
+    class AudioInputStream
+    class Clip
+    class FloatControl
+    class LineListener
+    class LineEvent
+}
+
+Client --> MusicPlayer : 简单调用
+MusicPlayer --> AudioSystem
+MusicPlayer --> AudioInputStream
+MusicPlayer --> Clip
+MusicPlayer --> FloatControl
+MusicPlayer --> LineListener
+
+note right of MusicPlayer
+    <b>外观模式的优点：</b>
+    1. 简化客户端调用
+    2. 隐藏子系统复杂性
+    3. 降低耦合度
+    4. 提供统一入口
+end note
+
+note bottom of Client
+    客户端只需要调用:
+    musicPlayer.play()
+    musicPlayer.stop()
+    等简单方法
+end note
+
+@enduml

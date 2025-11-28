@@ -2,6 +2,7 @@ package UserInterface;
 import javax.swing.*;
 
 import Library.MusicPlayer;
+import Library.RecordManager;
 import Library.TimeChecker;
 
 import java.awt.event.MouseEvent;
@@ -92,8 +93,19 @@ public class SmartSquare extends GameSquare implements MouseListener
 			if (cq.isSuccess()) {
 				long costTime = System.currentTimeMillis() - ((SmartSquare) board.getSquareAt(0, 0)).getStartTime();
 				cq.showBomb(xLocation, yLocation);
+				
+				// 保存记录
+				String modeName = board.getModeName();
+				String recordMsg = "";
+				if (modeName != null) {
+					int rank = RecordManager.getInstance().addRecord(modeName, costTime);
+					if (rank > 0) {
+						recordMsg = "\n🎉 新纪录！排名第 " + rank + " 名！";
+					}
+				}
+				
 				window("你赢了！用时 " + TimeChecker.getInstance().format(costTime) +
-                        "! 你想再试一次吗?","恭喜",
+                        "!" + recordMsg + "\n你想再试一次吗?","恭喜",
 						new ImageIcon("images/passFace.jpg"));
 			}
 		}

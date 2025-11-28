@@ -1,0 +1,107 @@
+@startuml GameModeFactory
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+package "Library" {
+    interface GameMode <<interface>> {
+        +getName(): String
+        +getWidth(): int
+        +getHeight(): int
+        +getBombs(): int
+    }
+    
+    class GameModeFactory {
+        +{static} BEGINNER: String = "beginner"
+        +{static} INTERMEDIATE: String = "intermediate"
+        +{static} ADVANCED: String = "advanced"
+        -{static} BEGINNER_MODE: GameMode
+        -{static} INTERMEDIATE_MODE: GameMode
+        -{static} ADVANCED_MODE: GameMode
+        --
+        +{static} createMode(type: String): GameMode
+        +{static} createCustomMode(width: int, height: int, bombs: int): GameMode
+        +{static} getMode(width: int, height: int, bombs: int): GameMode
+    }
+}
+
+package "UserInterface.GameModes" {
+    class BeginnerMode {
+        +getName(): String
+        +getWidth(): int
+        +getHeight(): int
+        +getBombs(): int
+    }
+    
+    class IntermediateMode {
+        +getName(): String
+        +getWidth(): int
+        +getHeight(): int
+        +getBombs(): int
+    }
+    
+    class AdvancedMode {
+        +getName(): String
+        +getWidth(): int
+        +getHeight(): int
+        +getBombs(): int
+    }
+    
+    class CustomMode {
+        -width: int
+        -height: int
+        -bombs: int
+        +CustomMode(width: int, height: int, bombs: int)
+        +getName(): String
+        +getWidth(): int
+        +getHeight(): int
+        +getBombs(): int
+    }
+}
+
+' 实现关系
+GameMode <|.. BeginnerMode
+GameMode <|.. IntermediateMode
+GameMode <|.. AdvancedMode
+GameMode <|.. CustomMode
+
+' 工厂创建关系
+GameModeFactory ..> BeginnerMode : <<creates>>
+GameModeFactory ..> IntermediateMode : <<creates>>
+GameModeFactory ..> AdvancedMode : <<creates>>
+GameModeFactory ..> CustomMode : <<creates>>
+GameModeFactory ..> GameMode : <<returns>>
+
+note right of GameModeFactory
+  工厂方法模式
+  - 封装对象创建逻辑
+  - 客户端无需知道具体类
+  - 易于扩展新模式
+end note
+
+note bottom of BeginnerMode
+  10x10 方格
+  10 地雷
+end note
+
+note bottom of IntermediateMode
+  16x16 方格
+  40 地雷
+end note
+
+note bottom of AdvancedMode
+  30x25 方格
+  100 地雷
+end note
+
+note bottom of CustomMode
+  用户自定义
+  宽/高/地雷数
+end note
+
+@enduml
