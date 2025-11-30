@@ -1,0 +1,126 @@
+@startuml Abstract_Factory_Pattern
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam classFontName Microsoft YaHei
+
+package "Library.Theme" {
+    
+    interface ThemeFactory <<AbstractFactory>> {
+        + getThemeName(): String
+        + getDisplayName(): String
+        + getBlockImage(): ImageIcon
+        + getNumberImage(number: int): ImageIcon
+        + getBombImage(): ImageIcon
+        + getBombRevealImage(): ImageIcon
+        + getFlagImage(): ImageIcon
+        + getFlagWrongImage(): ImageIcon
+        + getQuestionMarkImage(): ImageIcon
+        + getFailFaceImage(): ImageIcon
+        + getPassFaceImage(): ImageIcon
+        + getPrimaryColor(): Color
+        + getBackgroundColor(): Color
+        + getDescription(): String
+    }
+    
+    abstract class AbstractThemeFactory <<AbstractFactory>> {
+        # themeName: String
+        # imageFactory: ImageFlyweightFactory
+        __
+        + AbstractThemeFactory(themeName: String)
+        + getThemeName(): String
+        # getImage(imageName: String): ImageIcon
+        + getBlockImage(): ImageIcon
+        + getNumberImage(number: int): ImageIcon
+        + getBombImage(): ImageIcon
+        + preload(): void
+        __
+        {abstract} + getDisplayName(): String
+        {abstract} + getPrimaryColor(): Color
+        {abstract} + getBackgroundColor(): Color
+        {abstract} + getDescription(): String
+    }
+    
+    class DefaultThemeFactory <<ConcreteFactory>> {
+        + DefaultThemeFactory()
+        + getDisplayName(): String
+        + getPrimaryColor(): Color
+        + getBackgroundColor(): Color
+        + getDescription(): String
+    }
+    
+    class DarkThemeFactory <<ConcreteFactory>> {
+        + DarkThemeFactory()
+        + getDisplayName(): String
+        + getPrimaryColor(): Color
+        + getBackgroundColor(): Color
+        + getDescription(): String
+    }
+    
+    class OceanThemeFactory <<ConcreteFactory>> {
+        + OceanThemeFactory()
+        + getDisplayName(): String
+        + getPrimaryColor(): Color
+        + getBackgroundColor(): Color
+        + getDescription(): String
+    }
+    
+    class ForestThemeFactory <<ConcreteFactory>> {
+        + ForestThemeFactory()
+        + getDisplayName(): String
+        + getPrimaryColor(): Color
+        + getBackgroundColor(): Color
+        + getDescription(): String
+    }
+    
+    class PixelThemeFactory <<ConcreteFactory>> {
+        + PixelThemeFactory()
+        + getDisplayName(): String
+        + getPrimaryColor(): Color
+        + getBackgroundColor(): Color
+        + getDescription(): String
+    }
+    
+    class ThemeFactoryProvider <<Singleton>> {
+        - {static} instance: ThemeFactoryProvider
+        - factories: Map<String, ThemeFactory>
+        - currentFactory: ThemeFactory
+        __
+        - ThemeFactoryProvider()
+        + {static} getInstance(): ThemeFactoryProvider
+        + registerFactory(factory: ThemeFactory): void
+        + getFactory(themeName: String): ThemeFactory
+        + getCurrentFactory(): ThemeFactory
+        + setCurrentTheme(themeName: String): void
+        + getAvailableThemes(): String[]
+    }
+    
+}
+
+ThemeFactory <|.. AbstractThemeFactory
+AbstractThemeFactory <|-- DefaultThemeFactory
+AbstractThemeFactory <|-- DarkThemeFactory
+AbstractThemeFactory <|-- OceanThemeFactory
+AbstractThemeFactory <|-- ForestThemeFactory
+AbstractThemeFactory <|-- PixelThemeFactory
+
+ThemeFactoryProvider "1" o-- "*" ThemeFactory : 管理
+
+note right of ThemeFactory
+  <b>抽象工厂接口</b>
+  定义创建主题产品族的方法
+  每个主题包含：
+  - 方块图片
+  - 数字图片(0-8)
+  - 炸弹图片
+  - 旗帜图片
+  - 颜色配置
+end note
+
+note bottom of ThemeFactoryProvider
+  <b>工厂注册表</b>
+  统一管理所有主题工厂
+  提供获取和切换主题的接口
+end note
+
+@enduml

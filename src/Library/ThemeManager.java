@@ -1,12 +1,14 @@
 package Library;
 
+import Library.Theme.*;
+import javax.swing.ImageIcon;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 主题管理器 - 单例模式
- * 管理游戏的皮肤主题，支持切换不同风格的图片资源
+ * 整合享元模式、抽象工厂模式和建造者模式
  */
 public class ThemeManager {
     
@@ -16,6 +18,11 @@ public class ThemeManager {
     private List<String> availableThemes;
     private static final String THEMES_FOLDER = "themes";
     private static final String DEFAULT_THEME = "default";
+    
+    // 设计模式组件
+    private final ImageFlyweightFactory imageFlyweight;      // 享元模式
+    private final ThemeFactoryProvider factoryProvider;       // 抽象工厂模式
+    private final ThemeDirector themeDirector;                // 建造者模式
     
     // 图片资源名称常量
     public static final String BLOCK = "block.png";
@@ -29,8 +36,17 @@ public class ThemeManager {
     
     private ThemeManager() {
         availableThemes = new ArrayList<>();
+        
+        // 初始化设计模式组件
+        imageFlyweight = ImageFlyweightFactory.getInstance();
+        factoryProvider = ThemeFactoryProvider.getInstance();
+        themeDirector = new ThemeDirector();
+        
         scanThemes();
         currentTheme = DEFAULT_THEME;
+        
+        // 预加载默认主题
+        imageFlyweight.preloadTheme(DEFAULT_THEME);
     }
     
     public static ThemeManager getInstance() {
@@ -46,19 +62,16 @@ public class ThemeManager {
     private void scanThemes() {
         availableThemes.clear();
         
-        // 扫描 themes 文件夹下的所有子文件夹
         File themesDir = new File(THEMES_FOLDER);
         if (themesDir.exists() && themesDir.isDirectory()) {
             File[] themeFiles = themesDir.listFiles(File::isDirectory);
             if (themeFiles != null) {
-                // 确保 default 主题在第一位
                 for (File themeDir : themeFiles) {
                     if (themeDir.getName().equals(DEFAULT_THEME) && isValidTheme(themeDir)) {
                         availableThemes.add(themeDir.getName());
                         break;
                     }
                 }
-                // 添加其他主题
                 for (File themeDir : themeFiles) {
                     if (!themeDir.getName().equals(DEFAULT_THEME) && isValidTheme(themeDir)) {
                         availableThemes.add(themeDir.getName());
@@ -66,8 +79,7 @@ public class ThemeManager {
                 }
             }
         }
-        
-        // 如果没有找到任何主题，添加默认主题
+
         if (availableThemes.isEmpty()) {
             availableThemes.add(DEFAULT_THEME);
         }
@@ -99,7 +111,11 @@ public class ThemeManager {
      */
     public void setCurrentTheme(String themeName) {
         if (availableThemes.contains(themeName)) {
+            // 预加载新主题
+            imageFlyweight.preloadTheme(themeName);
             this.currentTheme = themeName;
+            // 同步更新抽象工厂
+            factoryProvider.setCurrentTheme(themeName);
         }
     }
     
@@ -132,8 +148,6 @@ public class ThemeManager {
     
     /**
      * 获取图片完整路径
-     * @param imageName 图片名称（如 "block.png", "1.png"）
-     * @return 完整的图片路径
      */
     public String getImagePath(String imageName) {
         String themePath = THEMES_FOLDER + "/" + currentTheme + "/" + imageName;
@@ -213,5 +227,95 @@ public class ThemeManager {
      */
     public void refreshThemes() {
         scanThemes();
+    }
+    
+    // ==================== 享元模式相关方法 ====================
+    
+    /**
+     * 获取享元工厂（用于共享图片资源）
+     */
+    public ImageFlyweightFactory getImageFlyweight() {
+        return imageFlyweight;
+    }
+    
+    /**
+     * 获取共享的 ImageIcon（享元模式）
+     */
+    public ImageIcon getSharedImage(String imageName) {
+        return imageFlyweight.getImage(currentTheme, imageName);
+    }
+    
+    /**
+     * 获取缓存统计信息
+     */
+    public String getCacheStats() {
+        return imageFlyweight.getCacheStats();
+    }
+    
+    /**
+     * 清除图片缓存
+     */
+    public void clearCache() {
+        imageFlyweight.clearAllCache();
+    }
+    
+    // ==================== 抽象工厂模式相关方法 ====================
+    
+    /**
+     * 获取主题工厂提供者
+     */
+    public ThemeFactoryProvider getFactoryProvider() {
+        return factoryProvider;
+    }
+    
+    /**
+     * 获取当前主题的工厂
+     */
+    public ThemeFactory getCurrentThemeFactory() {
+        return factoryProvider.getCurrentFactory();
+    }
+    
+    // ==================== 建造者模式相关方法 ====================
+    
+    /**
+     * 获取主题指挥者
+     */
+    public ThemeDirector getThemeDirector() {
+        return themeDirector;
+    }
+    
+    /**
+     * 创建自定义主题配置
+     */
+    public ThemeConfig createCustomThemeConfig() {
+        return new ThemeBuilder().build();
+    }
+    
+    /**
+     * 使用建造者创建暗黑主题配置
+     */
+    public ThemeConfig buildDarkTheme() {
+        return themeDirector.constructDarkTheme();
+    }
+    
+    /**
+     * 使用建造者创建海洋主题配置
+     */
+    public ThemeConfig buildOceanTheme() {
+        return themeDirector.constructOceanTheme();
+    }
+    
+    /**
+     * 使用建造者创建森林主题配置
+     */
+    public ThemeConfig buildForestTheme() {
+        return themeDirector.constructForestTheme();
+    }
+    
+    /**
+     * 使用建造者创建像素主题配置
+     */
+    public ThemeConfig buildPixelTheme() {
+        return themeDirector.constructPixelTheme();
     }
 }

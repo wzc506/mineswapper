@@ -1,0 +1,102 @@
+@startuml Builder_Pattern
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam classFontName Microsoft YaHei
+
+package "Library.Theme" {
+    
+    class ThemeConfig <<Product>> {
+        - themeName: String
+        - displayName: String
+        - description: String
+        - primaryColor: Color
+        - backgroundColor: Color
+        - blockColor: Color
+        - borderLightColor: Color
+        - borderDarkColor: Color
+        - emptyColor: Color
+        - numberColors: Color[9]
+        - bombColor: Color
+        - flagColor: Color
+        - questionMarkColor: Color
+        __
+        + getThemeName(): String
+        + getDisplayName(): String
+        + getPrimaryColor(): Color
+        + getNumberColor(index: int): Color
+        ... 其他getter/setter
+    }
+    
+    class ThemeBuilder <<Builder>> {
+        - config: ThemeConfig
+        __
+        + ThemeBuilder()
+        - setDefaultValues(): void
+        + themeName(name: String): ThemeBuilder
+        + displayName(name: String): ThemeBuilder
+        + description(desc: String): ThemeBuilder
+        + primaryColor(color: Color): ThemeBuilder
+        + primaryColor(r: int, g: int, b: int): ThemeBuilder
+        + backgroundColor(color: Color): ThemeBuilder
+        + blockColor(color: Color): ThemeBuilder
+        + borderLightColor(color: Color): ThemeBuilder
+        + borderDarkColor(color: Color): ThemeBuilder
+        + emptyColor(color: Color): ThemeBuilder
+        + bombColor(color: Color): ThemeBuilder
+        + flagColor(color: Color): ThemeBuilder
+        + questionMarkColor(color: Color): ThemeBuilder
+        + numberColor(index: int, color: Color): ThemeBuilder
+        + numberColors(colors: Color...): ThemeBuilder
+        + applyDarkPreset(): ThemeBuilder
+        + applyOceanPreset(): ThemeBuilder
+        + applyForestPreset(): ThemeBuilder
+        + build(): ThemeConfig
+        + reset(): ThemeBuilder
+    }
+    
+    class ThemeDirector <<Director>> {
+        - builder: ThemeBuilder
+        __
+        + ThemeDirector()
+        + ThemeDirector(builder: ThemeBuilder)
+        + constructDarkTheme(): ThemeConfig
+        + constructOceanTheme(): ThemeConfig
+        + constructForestTheme(): ThemeConfig
+        + constructPixelTheme(): ThemeConfig
+        + constructHighContrastTheme(): ThemeConfig
+        + constructCustomTheme(...): ThemeConfig
+    }
+    
+}
+
+ThemeBuilder ..> ThemeConfig : 构建
+ThemeDirector --> ThemeBuilder : 使用
+
+note right of ThemeBuilder
+  <b>链式调用示例</b>
+  new ThemeBuilder()
+    .themeName("my_theme")
+    .displayName("我的主题")
+    .applyDarkPreset()
+    .primaryColor(100, 150, 200)
+    .bombColor(Color.RED)
+    .build();
+end note
+
+note bottom of ThemeDirector
+  <b>指挥者</b>
+  封装常用主题的构建过程
+  提供预设主题的快速创建
+end note
+
+note left of ThemeConfig
+  <b>产品</b>
+  包含主题的所有配置信息
+  - 基本信息（名称、描述）
+  - 颜色配置（主色、背景色）
+  - 数字颜色（9种）
+  - 特殊元素颜色
+end note
+
+@enduml

@@ -1,0 +1,63 @@
+@startuml Flyweight_Pattern
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 14
+skinparam classFontName Microsoft YaHei
+
+package "Library.Theme" {
+    
+    class ImageFlyweightFactory <<Singleton>> {
+        - {static} instance: ImageFlyweightFactory
+        - imageCache: Map<String, ImageIcon>
+        - cacheHits: int
+        - cacheMisses: int
+        __
+        - ImageFlyweightFactory()
+        + {static} getInstance(): ImageFlyweightFactory
+        + getImage(imagePath: String): ImageIcon
+        + getImage(themeName: String, imageName: String): ImageIcon
+        + preloadTheme(themeName: String): void
+        + clearThemeCache(themeName: String): void
+        + clearAllCache(): void
+        + getCacheStats(): String
+        + getCacheHitRate(): double
+    }
+    
+    class ImageIcon <<Flyweight>> {
+        图片对象（共享）
+    }
+    
+}
+
+package "UserInterface" {
+    
+    class SmartSquare <<Client>> {
+        使用共享图片
+    }
+    
+    class GameBoard <<Client>> {
+        包含多个格子
+    }
+    
+}
+
+ImageFlyweightFactory "1" *-- "*" ImageIcon : 缓存管理
+SmartSquare ..> ImageFlyweightFactory : 获取图片
+GameBoard "1" *-- "n" SmartSquare : 包含
+
+note right of ImageFlyweightFactory
+  <b>享元池</b>
+  key: "themes/dark/block.png"
+  value: ImageIcon对象
+  
+  750个格子共享同一张图片
+  缓存命中率: 99.47%
+end note
+
+note bottom of SmartSquare
+  所有格子共享相同的
+  ImageIcon 引用，而不是
+  每个格子创建新对象
+end note
+
+@enduml
