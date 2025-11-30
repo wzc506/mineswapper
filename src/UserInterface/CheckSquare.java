@@ -1,4 +1,7 @@
 package UserInterface;
+
+import Library.ThemeManager;
+
 public class CheckSquare
 {
     private GameBoard board;
@@ -40,15 +43,17 @@ public class CheckSquare
 
     protected void showBomb(int currentX, int currentY)
     {
+        ThemeManager theme = ThemeManager.getInstance();
+        
         for (int y = 0; y < boardHeight; y++)
         {
             for (int x = 0; x < boardWidth; x++)
             {
                 if (currentX == x && currentY == y){}
                 else if (((SmartSquare) board.getSquareAt(x, y)).getBombExist())
-                    board.getSquareAt(x, y).setImage("images/bomb.png");
+                    board.getSquareAt(x, y).setImage(theme.getBombImage());
                 else if(((SmartSquare) board.getSquareAt(x, y)).getGuessThisSquareIsBomb())
-                    board.getSquareAt(x, y).setImage("images/flagWrong.png"); // Wrong guess!
+                    board.getSquareAt(x, y).setImage(theme.getFlagWrongImage()); // Wrong guess!
             }
         }
     }
@@ -57,6 +62,7 @@ public class CheckSquare
     {
         int count = 0;
         SmartSquare currentObject;
+        ThemeManager theme = ThemeManager.getInstance();
 
         if (hasKickedBoundary(currentX, currentY))
             return;
@@ -83,9 +89,9 @@ public class CheckSquare
         }
 
         if (count != 0)
-            currentObject.setImage("images/" + count + ".png");
+            currentObject.setImage(theme.getNumberImagePath(count));
         else {
-            currentObject.setImage("images/0.png");
+            currentObject.setImage(theme.getNumberImagePath(0));
             countBomb(currentX - 1, currentY -1); 
             countBomb(currentX, currentY -1); 
             countBomb(currentX + 1, currentY -1);

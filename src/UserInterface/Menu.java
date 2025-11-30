@@ -6,6 +6,7 @@ import Library.GameModeFactory;
 import Library.MusicPlayer;
 import Library.RecordManager;
 import Library.RecordObserver;
+import Library.ThemeManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -23,6 +24,7 @@ public class Menu extends JFrame implements ActionListener, RecordObserver
     private JTextField width, height, mines;
     private JCheckBox musicCheckBox;
     private JComboBox<String> musicSelector;
+    private JComboBox<String> themeSelector;
     private JSlider volumeSlider;
     private JTextArea recordsArea;
     private String currentModeName = "新手"; // 当前选中的模式名称
@@ -127,8 +129,28 @@ public class Menu extends JFrame implements ActionListener, RecordObserver
         });
         add(volumeSlider);
 
+        // 主题选择
+        JLabel themeLabel = new JLabel("游戏主题:");
+        themeLabel.setBounds(40, 375, 70, 20);
+        add(themeLabel);
+
+        themeSelector = new JComboBox<>();
+        ThemeManager themeManager = ThemeManager.getInstance();
+        for (String theme : themeManager.getAvailableThemes()) {
+            themeSelector.addItem(themeManager.getThemeDisplayName(theme));
+        }
+        themeSelector.setBounds(110, 375, 100, 20);
+        themeSelector.addActionListener(e -> {
+            int selectedIndex = themeSelector.getSelectedIndex();
+            if (selectedIndex >= 0) {
+                String themeName = themeManager.getAvailableThemes().get(selectedIndex);
+                themeManager.setCurrentTheme(themeName);
+            }
+        });
+        add(themeSelector);
+
         start = new JButton("开始游戏");
-        start.setBounds(80,385,100,25);
+        start.setBounds(80, 410, 100, 25);
         add(start);
 
         // 右侧记录显示区域
@@ -168,7 +190,7 @@ public class Menu extends JFrame implements ActionListener, RecordObserver
         group.add(custom);
 
         beginner.setSelected(true);
-        setSize(470, 470);
+        setSize(470, 500);
         setLayout(null);
         setVisible(true);
         setResizable(false);

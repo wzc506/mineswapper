@@ -3,6 +3,7 @@ import javax.swing.*;
 
 import Library.MusicPlayer;
 import Library.RecordManager;
+import Library.ThemeManager;
 import Library.TimeChecker;
 
 import java.awt.event.MouseEvent;
@@ -24,7 +25,7 @@ public class SmartSquare extends GameSquare implements MouseListener
 
 	public SmartSquare(int x, int y, GameBoard board)
 	{
-		super(x, y, "images/block.png", board);
+		super(x, y, ThemeManager.getInstance().getBlockImage(), board);
 
 		xLocation = x;
 		yLocation = y;
@@ -75,16 +76,17 @@ public class SmartSquare extends GameSquare implements MouseListener
 	public void clicked()
 	{
 		CheckSquare cq = new CheckSquare(board);
+		ThemeManager theme = ThemeManager.getInstance();
 		
 		guessThisSquareIsBomb = false;
 
 		if(thisSquareHasBomb)
 		{
-			setImage("images/bombReveal.png");
+			setImage(theme.getBombRevealImage());
 			long costTime = System.currentTimeMillis() - ((SmartSquare) board.getSquareAt(0, 0)).getStartTime();
 			cq.showBomb(xLocation, yLocation);
 			window("你输了！用时 " + TimeChecker.getInstance().format(costTime) + ". 你想再试一次吗?", "游戏结束",
-					new ImageIcon("images/cai.jpg"));
+					new ImageIcon(theme.getFailFaceImage()));
 		} else{
 			thisSquareHasTraversed = false;
 
@@ -106,7 +108,7 @@ public class SmartSquare extends GameSquare implements MouseListener
 				
 				window("你赢了！用时 " + TimeChecker.getInstance().format(costTime) +
                         "!" + recordMsg + "\n你想再试一次吗?","恭喜",
-						new ImageIcon("images/passFace.jpg"));
+						new ImageIcon(theme.getPassFaceImage()));
 			}
 		}
 	}
@@ -130,19 +132,21 @@ public class SmartSquare extends GameSquare implements MouseListener
 	@Override
 	public void mouseClicked(MouseEvent e)
 	{
+		ThemeManager theme = ThemeManager.getInstance();
+		
 		if (e.getButton() == MouseEvent.BUTTON3)
 		{
 			int clickCount = e.getClickCount();
 
 			if (clickCount == 1)
 			{
-				setImage("images/redFlag.png");
+				setImage(theme.getFlagImage());
 				guessThisSquareIsBomb = true;
 			}
 
 			if (clickCount == 2)
 			{
-				setImage("images/questionMark.png");
+				setImage(theme.getQuestionMarkImage());
 				guessThisSquareIsBomb = false;
 			}
 		}
