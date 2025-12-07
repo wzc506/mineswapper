@@ -64,6 +64,60 @@ interface TimeChecker {
 
 interface MouseListener <<interface>>
 
+' --- 主题系统 (Theme System) ---
+
+class ThemeManager <<Singleton>> {
+    - {static} instance: ThemeManager
+    - currentThemeFactory: ThemeFactory
+    - imageFactory: ImageFlyweightFactory
+    + {static} getInstance(): ThemeManager
+    + setTheme(String themeName)
+    + getThemeImage(String imageName): ImageIcon
+}
+
+interface ThemeFactory <<Abstract Factory>> {
+    + getThemeName(): String
+    + getImagePath(String imageName): String
+}
+
+abstract class AbstractThemeFactory {
+    # basePath: String
+    + getImagePath(String imageName): String
+}
+
+class DefaultThemeFactory
+class DarkThemeFactory
+class OceanThemeFactory
+class ForestThemeFactory
+class PixelThemeFactory
+
+class ImageFlyweightFactory <<Flyweight Factory>> {
+    - imageCache: Map<String, ImageIcon>
+    + getImage(String path): ImageIcon
+}
+
+class ThemeConfig {
+    - themeName: String
+    - isDark: boolean
+    - fontSize: int
+}
+
+interface ThemeBuilder <<Builder>> {
+    + setThemeName(String name)
+    + setDark(boolean isDark)
+    + setFontSize(int size)
+    + build(): ThemeConfig
+}
+
+class ThemeDirector {
+    - builder: ThemeBuilder
+    + constructTheme(String name): ThemeConfig
+}
+
+class ThemeFactoryProvider {
+    + {static} getFactory(String themeName): ThemeFactory
+}
+
 ' --- 关系定义 ---
 
 ' 继承与实现
@@ -72,6 +126,14 @@ Bomb <|-- ProduceBombs
 TimeChecker <|.. SmartSquare
 MouseListener <|.. SmartSquare
 
+' 主题系统继承关系
+ThemeFactory <|.. AbstractThemeFactory
+AbstractThemeFactory <|-- DefaultThemeFactory
+AbstractThemeFactory <|-- DarkThemeFactory
+AbstractThemeFactory <|-- OceanThemeFactory
+AbstractThemeFactory <|-- ForestThemeFactory
+AbstractThemeFactory <|-- PixelThemeFactory
+
 ' 依赖与组合
 Driver ..> Menu : creates
 Menu ..> GameBoard : creates
@@ -79,5 +141,16 @@ GameBoard "1" *-- "many" GameSquare : contains
 ProduceBombs ..> GameBoard : uses
 CheckSquare ..> GameBoard : uses
 CheckSquare ..> SmartSquare : uses
+
+' 主题系统关联关系
+ThemeManager "1" o-- "1" ThemeFactory : holds
+ThemeManager "1" *-- "1" ImageFlyweightFactory : contains
+ThemeManager ..> ThemeFactoryProvider : uses
+ThemeManager ..> ThemeDirector : uses
+ThemeDirector o-- ThemeBuilder : uses
+ThemeBuilder ..> ThemeConfig : creates
+
+' 核心系统与主题系统的集成
+SmartSquare ..> ThemeManager : uses (获取图片资源)
 
 @enduml
