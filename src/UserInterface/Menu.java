@@ -139,6 +139,15 @@ public class Menu extends JFrame implements ActionListener, RecordObserver
         for (String theme : themeManager.getAvailableThemes()) {
             themeSelector.addItem(themeManager.getThemeDisplayName(theme));
         }
+        
+        // 根据保存的主题设置下拉框的选中项
+        String currentTheme = themeManager.getCurrentTheme();
+        java.util.List<String> availableThemes = themeManager.getAvailableThemes();
+        int savedThemeIndex = availableThemes.indexOf(currentTheme);
+        if (savedThemeIndex >= 0) {
+            themeSelector.setSelectedIndex(savedThemeIndex);
+        }
+        
         themeSelector.setBounds(110, 375, 100, 20);
         themeSelector.addActionListener(e -> {
             int selectedIndex = themeSelector.getSelectedIndex();

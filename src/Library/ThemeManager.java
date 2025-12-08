@@ -2,7 +2,7 @@ package Library;
 
 import Library.Theme.*;
 import javax.swing.ImageIcon;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +18,7 @@ public class ThemeManager {
     private List<String> availableThemes;
     private static final String THEMES_FOLDER = "themes";
     private static final String DEFAULT_THEME = "default";
+    private static final String SETTINGS_FILE = "theme_settings.dat";  // 主题设置保存文件
     
     // 设计模式组件
     private final ImageFlyweightFactory imageFlyweight;      // 享元模式
@@ -43,10 +44,18 @@ public class ThemeManager {
         themeDirector = new ThemeDirector();
         
         scanThemes();
-        currentTheme = DEFAULT_THEME;
         
-        // 预加载默认主题
-        imageFlyweight.preloadTheme(DEFAULT_THEME);
+        // 加载上次保存的主题设置
+        String savedTheme = loadThemeSetting();
+        if (savedTheme != null && availableThemes.contains(savedTheme)) {
+            currentTheme = savedTheme;
+        } else {
+            currentTheme = DEFAULT_THEME;
+        }
+        
+        // 预加载当前主题
+        imageFlyweight.preloadTheme(currentTheme);
+        factoryProvider.setCurrentTheme(currentTheme);
     }
     
     public static ThemeManager getInstance() {
@@ -116,7 +125,39 @@ public class ThemeManager {
             this.currentTheme = themeName;
             // 同步更新抽象工厂
             factoryProvider.setCurrentTheme(themeName);
+            // 保存主题设置
+            saveThemeSetting(themeName);
         }
+    }
+    
+    /**
+     * 保存主题设置到文件
+     */
+    private void saveThemeSetting(String themeName) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(SETTINGS_FILE))) {
+            writer.println(themeName);
+        } catch (IOException e) {
+            System.err.println("无法保存主题设置: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * 从文件加载主题设置
+     */
+    private String loadThemeSetting() {
+        File file = new File(SETTINGS_FILE);
+        if (!file.exists()) {
+            return null;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String themeName = reader.readLine();
+            if (themeName != null && !themeName.trim().isEmpty()) {
+                return themeName.trim();
+            }
+        } catch (IOException e) {
+            System.err.println("无法加载主题设置: " + e.getMessage());
+        }
+        return null;
     }
     
     /**
