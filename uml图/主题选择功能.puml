@@ -1,0 +1,40 @@
+@startuml 主题选择功能类图
+
+class Menu {
+    ...
+}
+
+class ThemeManager {
+    -currentTheme: String
+    -availableThemes: List<String>
+    -imageFlyweight: ImageFlyweightFactory
+    -factoryProvider: ThemeFactoryProvider
+    -themeDirector: ThemeDirector
+    +getInstance()
+    +getAvailableThemes()
+    +getCurrentTheme()
+    +setCurrentTheme(String)
+}
+
+class ThemeFactoryProvider {
+    +getInstance()
+    +getFactory(String)
+}
+
+class ThemeDirector {
+    +constructDarkTheme()
+    +constructDefaultTheme()
+    ...
+}
+
+class ImageFlyweightFactory {
+    +getInstance()
+    +getImage(String)
+}
+
+Menu --> ThemeManager : 主题切换/获取
+ThemeManager *-- ThemeFactoryProvider
+ThemeManager *-- ThemeDirector
+ThemeManager *-- ImageFlyweightFactory
+
+@enduml

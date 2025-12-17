@@ -1,0 +1,27 @@
+@startuml 音乐播放功能使用类图
+
+class Driver {
+    +main(String[])
+}
+
+class Menu {
+    -musicCheckBox: JCheckBox
+    -musicSelector: JComboBox
+    -volumeSlider: JSlider
+    ...
+}
+
+class MusicPlayer {
+    -static instance: MusicPlayer
+    ...
+    +getInstance()
+    +play()
+    +stop()
+    +setVolume(float)
+    +setSelectedIndex(int)
+}
+
+Driver --> Menu : 创建
+Menu ..> MusicPlayer : 控制音乐播放
+
+@enduml

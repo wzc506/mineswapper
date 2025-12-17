@@ -1,0 +1,26 @@
+@startuml 记录功能类图
+
+class Menu {
+    ...
+    +onRecordUpdated(String)
+}
+
+interface RecordObserver {
+    +onRecordUpdated(String)
+}
+
+class RecordManager {
+    -records: Map<String, List<Long>>
+    -observers: List<RecordObserver>
+    +getInstance()
+    +addObserver(RecordObserver)
+    +removeObserver(RecordObserver)
+    +updateRecord(...)
+    +getFormattedRecords(String)
+}
+
+Menu ..|> RecordObserver
+Menu --> RecordManager : 注册/移除/获取记录
+RecordManager o-- RecordObserver : 通知
+
+@enduml
