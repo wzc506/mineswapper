@@ -1,12 +1,8 @@
 package UserInterface;
-import javax.swing.*;
 
-import Library.GameMode;
-import Library.GameModeFactory;
-import Library.MusicPlayer;
-import Library.RecordManager;
-import Library.RecordObserver;
-import Library.ThemeManager;
+import Library.*;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;

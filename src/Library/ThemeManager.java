@@ -182,6 +182,8 @@ public class ThemeManager {
                 return "森林";
             case "pixel":
                 return "像素";
+            case "maths":
+                return "数学";
             default:
                 return themeName;
         }
