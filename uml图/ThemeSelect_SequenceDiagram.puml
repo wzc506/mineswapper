@@ -1,0 +1,12 @@
+@startuml 主题选择功能对象交互图
+actor User
+participant Menu
+participant ThemeManager
+participant ThemeFactoryProvider
+
+User -> Menu : 选择主题
+Menu -> ThemeManager : setCurrentTheme(themeName)
+ThemeManager -> ThemeFactoryProvider : getFactory(themeName)
+ThemeFactoryProvider --> ThemeManager : 返回主题工厂
+ThemeManager --> Menu : 切换主题完成
+@enduml
